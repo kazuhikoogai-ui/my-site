@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11 日本人の宗教って？</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Meiryo", sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { max-width: 680px; width: 100%; }
+        h1 { text-align: center; color: #2c3e50; font-size: 1.5rem; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #3498db; }
+        .nav-links { text-align: center; margin-bottom: 15px; font-size: 0.9rem; }
+        .nav-links a { color: #3498db; text-decoration: none; margin: 0 10px; font-weight: bold; }
+        .settings-panel { background: #ffffff; padding: 16px 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 12px; }
+        .setting-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.92rem; }
+        .setting-label { font-weight: bold; color: #34495e; display: flex; align-items: center; gap: 6px; }
+        .voice-controls { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end; min-width: 260px; }
+        select { padding: 6px 10px; border: 1px solid #ccd1d9; border-radius: 6px; background-color: #fcfcfc; font-size: 0.88rem; max-width: 240px; cursor: pointer; }
+        .btn-test { padding: 5px 10px; background-color: #ecf0f1; border: 1px solid #bdc3c7; border-radius: 6px; cursor: pointer; font-size: 0.82rem; color: #2c3e50; white-space: nowrap; }
+        .speed-control { display: flex; align-items: center; gap: 10px; }
+        .speed-val { font-weight: bold; color: #2980b9; min-width: 45px; text-align: right; }
+        .all-play-container { margin-top: 4px; padding-top: 10px; border-top: 1px solid #edf2f7; display: flex; align-items: center; justify-content: space-between; }
+        .btn-play-all { background-color: #2ecc71; color: white; border: none; padding: 10px 18px; font-size: 0.95rem; font-weight: bold; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-play-all.playing { background-color: #e74c3c; }
+        .play-all-status { font-size: 0.88rem; font-weight: bold; color: #7f8c8d; }
+        .card { background: #ffffff; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #3498db; position: relative; transition: all 0.3s ease; }
+        .card.active-playing { border-left: 6px solid #e67e22; background-color: #f0f7ff; box-shadow: 0 0 0 2px #3498db, 0 6px 12px rgba(52, 152, 219, 0.2); transform: scale(1.01); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .context { font-size: 0.88rem; color: #7f8c8d; }
+        .playing-badge { display: none; background-color: #e67e22; color: white; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
+        .card.active-playing .playing-badge { display: inline-block; }
+        .btn-autoplay { background: #eafaf1; border: 1px solid #2ecc71; color: #27ae60; border-radius: 15px; padding: 3px 10px; font-size: 0.78rem; cursor: pointer; font-weight: bold; }
+        .japanese-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+        .japanese { font-size: 1.15rem; font-weight: bold; color: #2c3e50; }
+        .btn-mini-sound { background: #f0f3f6; border: 1px solid #d2d7dc; border-radius: 6px; padding: 3px 8px; font-size: 0.8rem; color: #4a5568; cursor: pointer; }
+        .btn-show { background-color: #3498db; color: white; border: none; padding: 8px 16px; font-size: 0.95rem; border-radius: 6px; cursor: pointer; }
+        .english-area { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #e0e0e0; }
+        .english { font-size: 1.25rem; font-weight: bold; color: #e67e22; margin-bottom: 10px; }
+        .btn-replay { background: #ffffff; border: 1px solid #3498db; color: #3498db; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>⛩️ 11 日本人の宗教って？</h1>
+    <div class="nav-links">
+        <a href="index.html">🏠 TOP（目次）</a>
+        <a href="Scene11-10.html">⮜ 10 日本人のバレンタイン</a>
+        <a href="Scene12-01.html">Scene12-01 滞在最終日～空港へ ➔</a>
+    </div>
+    <div class="settings-panel">
+        <div class="setting-row">
+            <span class="setting-label">🗣️ 英語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-en"></select>
+                <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🇯🇵 日本語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-ja"></select>
+                <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🐢 再生速度 🐇</span>
+            <div class="speed-control">
+                <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
+                <span id="speed-label" class="speed-val">0.80x</span>
+            </div>
+        </div>
+        <div class="all-play-container">
+            <button class="btn-play-all" id="btn-toggle-all">
+                <span id="all-btn-icon">▶️</span>
+                <span id="all-btn-text">全問を最初から連続再生</span>
+            </button>
+            <span id="all-play-status" class="play-all-status">全12問 停止中</span>
+        </div>
+    </div>
+    <div id="phrases-list"></div>
+</div>
+<script>
+    const data = [
+        {
+                "id": 914,
+                "context": "日本の宗教について説明してみましょう。",
+                "ja": "日本の主な宗教は神道と仏教です",
+                "en": "The major religions in Japan are Shintoism and Buddhism."
+        },
+        {
+                "id": 915,
+                "context": "仏教とは？",
+                "ja": "仏教は朝鮮から伝わりました",
+                "en": "Buddhism came from Korea."
+        },
+        {
+                "id": 916,
+                "context": "神道とは？",
+                "ja": "神道は日本古来の宗教です",
+                "en": "Shintoism is Japan's native religion."
+        },
+        {
+                "id": 917,
+                "context": "仏教と神道の使い分け　その１",
+                "ja": "葬式はたいてい仏教の寺で行われます",
+                "en": "Funerals are usually held at Buddhist temples."
+        },
+        {
+                "id": 918,
+                "context": "仏教と神道の使い分け　その２",
+                "ja": "伝統的な結婚式は神道の神社で行われます",
+                "en": "Traditional wedding ceremonies are held at Shinto shrines."
+        },
+        {
+                "id": 919,
+                "context": "仏教と神道の使い分け　その３",
+                "ja": "私たちは元旦には神社を訪れて幸せを祈ります",
+                "en": "We visit shrines to wish for happiness on New Year's Day."
+        },
+        {
+                "id": 920,
+                "context": "日本人のクリスマスの過ごし方　その１",
+                "ja": "クリスマスイブにパーティを開いて楽しむ人もいます",
+                "en": "Some people enjoy having a party on Christmas Eve."
+        },
+        {
+                "id": 921,
+                "context": "日本人のクリスマスの過ごし方　その２",
+                "ja": "クリスマスの装飾が街のあらゆるところで見られます",
+                "en": "Christmas decorations can be seen everywhere on the streets."
+        },
+        {
+                "id": 922,
+                "context": "日本人のクリスマスの過ごし方　その３",
+                "ja": "家にクリスマスツリーを飾る家庭もあります",
+                "en": "Some families put up Christmas trees in their houses."
+        },
+        {
+                "id": 923,
+                "context": "日本人のクリスマスの過ごし方　その４",
+                "ja": "ほとんどの親が子供にプレゼントをあげます",
+                "en": "Most parents give their children presents."
+        },
+        {
+                "id": 924,
+                "context": "以上の説明から導き出される結論は",
+                "ja": "日本人のほとんどがあまり信心深くないのかも",
+                "en": "Most Japanese are probably not so religious."
+        },
+        {
+                "id": 925,
+                "context": "多くの日本人にとって",
+                "ja": "宗教的な儀式は私たちの生活の一部です",
+                "en": "Religious rituals are a part of our lives."
+        }
+];
+</script>
+<script src="app-player.js"></script>
+</body>
+</html>
