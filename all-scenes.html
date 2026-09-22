@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全セクション通し再生 (全938問)</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Meiryo", sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { max-width: 680px; width: 100%; }
+        h1 { text-align: center; color: #2c3e50; font-size: 1.5rem; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #3498db; }
+        .nav-links { text-align: center; margin-bottom: 15px; font-size: 0.9rem; }
+        .nav-links a { color: #3498db; text-decoration: none; margin: 0 10px; font-weight: bold; }
+        .settings-panel { background: #ffffff; padding: 16px 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 12px; position: sticky; top: 10px; z-index: 100; }
+        .setting-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.92rem; }
+        .setting-label { font-weight: bold; color: #34495e; display: flex; align-items: center; gap: 6px; }
+        .voice-controls { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end; min-width: 260px; }
+        select { padding: 6px 10px; border: 1px solid #ccd1d9; border-radius: 6px; background-color: #fcfcfc; font-size: 0.88rem; max-width: 240px; cursor: pointer; }
+        .btn-test { padding: 5px 10px; background-color: #ecf0f1; border: 1px solid #bdc3c7; border-radius: 6px; cursor: pointer; font-size: 0.82rem; color: #2c3e50; white-space: nowrap; }
+        .speed-control { display: flex; align-items: center; gap: 10px; }
+        .speed-val { font-weight: bold; color: #2980b9; min-width: 45px; text-align: right; }
+        .all-play-container { margin-top: 4px; padding-top: 10px; border-top: 1px solid #edf2f7; display: flex; align-items: center; justify-content: space-between; }
+        .btn-play-all { background-color: #2ecc71; color: white; border: none; padding: 10px 18px; font-size: 0.95rem; font-weight: bold; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-play-all.playing { background-color: #e74c3c; }
+        .play-all-status { font-size: 0.88rem; font-weight: bold; color: #7f8c8d; }
+        .card { background: #ffffff; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #3498db; position: relative; transition: all 0.3s ease; }
+        .card.active-playing { border-left: 6px solid #e67e22; background-color: #f0f7ff; box-shadow: 0 0 0 2px #3498db, 0 6px 12px rgba(52, 152, 219, 0.2); transform: scale(1.01); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .context { font-size: 0.88rem; color: #7f8c8d; }
+        .playing-badge { display: none; background-color: #e67e22; color: white; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
+        .card.active-playing .playing-badge { display: inline-block; }
+        .btn-autoplay { background: #eafaf1; border: 1px solid #2ecc71; color: #27ae60; border-radius: 15px; padding: 3px 10px; font-size: 0.78rem; cursor: pointer; font-weight: bold; }
+        .japanese-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+        .japanese { font-size: 1.15rem; font-weight: bold; color: #2c3e50; }
+        .btn-mini-sound { background: #f0f3f6; border: 1px solid #d2d7dc; border-radius: 6px; padding: 3px 8px; font-size: 0.8rem; color: #4a5568; cursor: pointer; }
+        .btn-show { background-color: #3498db; color: white; border: none; padding: 8px 16px; font-size: 0.95rem; border-radius: 6px; cursor: pointer; }
+        .english-area { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #e0e0e0; }
+        .english { font-size: 1.25rem; font-weight: bold; color: #e67e22; margin-bottom: 10px; }
+        .btn-replay { background: #ffffff; border: 1px solid #3498db; color: #3498db; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🌟 全セクション連続再生</h1>
+    <div class="nav-links">
+        <a href="index.html">🏠 TOP（目次）</a>
+    </div>
+    <div class="settings-panel">
+        <div class="setting-row">
+            <span class="setting-label">🗣️ 英語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-en"></select>
+                <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🇯🇵 日本語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-ja"></select>
+                <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🐢 再生速度 🐇</span>
+            <div class="speed-control">
+                <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
+                <span id="speed-label" class="speed-val">0.80x</span>
+            </div>
+        </div>
+        <div class="all-play-container">
+            <button class="btn-play-all" id="btn-toggle-all">
+                <span id="all-btn-icon">▶️</span>
+                <span id="all-btn-text">全セクションを最初から連続再生</span>
+            </button>
+            <span id="all-play-status" class="play-all-status">全938問 停止中</span>
+        </div>
+    </div>
+    <div id="phrases-list"></div>
+</div>
+<script>
+    const data = [
+        // --- 01 空港到着～テイクオフ！ ---
+        { id: 1, context: "【Scene01-01 空港到着】空港に着くと、その雰囲気だけでもう", ja: "ワクワクしてきた", en: "I'm getting excited." },
+        { id: 2, context: "【Scene01-01 空港到着】旅行中１００％何もないとは言い切れないのだから", ja: "保険に入っておいた方がいいよ", en: "You should take out some insurance." },
+        { id: 3, context: "【Scene01-01 空港到着】旅行経験値の高いしっかり者の友人には、思わず", ja: "頼りにしてるよ", en: "I'm counting on you." },
+        { id: 4, context: "【Scene01-01 空港到着】搭乗ゲートが開きました。", ja: "搭乗が始まったよ", en: "The flight is boarding." },
+        { id: 5, context: "【Scene01-01 空港到着】チケットを見ても座席がどこだかよくわからないときは", ja: "私の席はどこか教えていただけますか？", en: "Could you tell me where my seat is?" },
+        { id: 6, context: "【Scene01-01 空港到着】どう考えても自分の席なのに、見知らぬ人が座っていたら", ja: "ここは私の席なのですが", en: "I'm afraid this is my seat." },
+        { id: 7, context: "【Scene01-01 空港到着】自分で言う勇気のない人は、フライトアテンダントにヘルプを求めましょう。", ja: "誰かが私の席に座っているのですが", en: "Somebody is sitting in my seat." },
+        { id: 8, context: "【Scene01-01 空港到着】離陸間近に言われることは", ja: "シートベルトをお締めください", en: "Fasten your seat belt, please." },
+        { id: 9, context: "【Scene01-01 空港到着】シートベルトがなかなか締まらないときは", ja: "シートベルトの締め方を教えていただけますか？", en: "Could you show me how to fasten the seat belt?" },
+
+        // --- 02 機内で映画を観る ---
+        { id: 10, context: "【Scene01-02 映画を観る】フライト中最大の楽しみと言えばコレ。", ja: "何の映画が観られるんだろう", en: "I wonder what movies are on this flight." },
+        { id: 11, context: "【Scene01-02 映画を観る】前の座席のポケットの中に番組ガイドが見つからないときは", ja: "映画の番組ガイドをいただけますか？", en: "May I have the movie guide?" },
+        { id: 12, context: "【Scene01-02 映画を観る】予告編なら観たことがあるけど", ja: "この映画、まだ日本では公開されてないよ", en: "This movie hasn't been released in Japan yet." },
+        { id: 13, context: "【Scene01-02 映画を観る】スクリーンが中央にひとつしかないような機内では", ja: "スクリーンが見えないんです", en: "I can't see the screen." },
+        { id: 14, context: "【Scene01-02 映画を観る】スクリーンの近くに空席があるようなら", ja: "向こうへ移動してもいいですか？", en: "May I move over there?" },
+        { id: 15, context: "【Scene01-02 映画を観る】ここ以外の席ならどこでもいい、というようなアンラッキーな席に当たってしまったら", ja: "席を変わってもいいですか？", en: "Can I change my seat?" },
+        { id: 16, context: "【Scene01-02 映画を観る】チャンネルを変えても雑音しか聞こえてこない。そんなときは", ja: "イヤホンが壊れています", en: "My earphones don't work." },
+
+        // --- 03 フライト中の体調管理 ---
+        { id: 17, context: "【Scene01-03 体調管理】離陸後フライトアテンダントに、あるいは後ろの席のおじさんに", ja: "座席を倒してもいいですか？", en: "May I recline my seat?" },
+        { id: 18, context: "【Scene01-03 体調管理】気分が悪いときは我慢せずにトイレへ行くか、あるいは", ja: "吐くための袋をもらえますか？", en: "May I have an airsick bag, please?" },
+        { id: 19, context: "【Scene01-03 体調管理】機内の冷房がききすぎていて凍えそうなときは", ja: "ちょっと寒いのですが", en: "I'm a little cold." },
+        { id: 20, context: "【Scene01-03 体調管理】うすい毛布でも２枚あればかなりマシになるでしょう。", ja: "毛布をもう１枚いただけますか？", en: "May I have another blanket, please?" },
+        { id: 21, context: "【Scene01-03 体調管理】エアコンの風をもろに受けて気分がわるいので", ja: "エアコンの切り方を教えていただけますか？", en: "Could you show me how to turn off the air conditioner?" },
+        { id: 22, context: "【Scene01-03 体調管理】何時間も座りっぱなしだと、さすがに", ja: "足がむくんでる", en: "My legs are swollen." },
+        { id: 23, context: "【Scene01-03 体調管理】足に血がたまらないように", ja: "立って動きまわらなくちゃ", en: "I've got to get up and move around." },
+        { id: 24, context: "【Scene01-03 体調管理】水分もこまめにとるようにしましょう。", ja: "お水を一杯いただけますか？", en: "Could I have a glass of water?" },
+
+        // --- 04 機内食を食べよう ---
+        { id: 25, context: "【Scene01-04 機内食】機内ではマメに飲み物を持ってきてくれます。", ja: "お飲み物は何になさいますか？", en: "What would you like to drink?" },
+        { id: 26, context: "【Scene01-04 機内食】飲み物の種類を聞きたいときは", ja: "ソフトドリンクは何がありますか？", en: "What kind of soft drinks do you have?" },
+        { id: 27, context: "【Scene01-04 機内食】機内食の定番と言えば", ja: "ビーフとチキンどちらがいいですか？", en: "Beef or chicken?" },
+        { id: 28, context: "【Scene01-04 機内食】機内食が運ばれてきても今は食べられそうにない、というときは", ja: "後でいただいてもいいですか？", en: "May I have it later?" },
+        { id: 29, context: "【Scene01-04 機内食】今食べられない理由を述べましょう。", ja: "今はお腹がすいてないんです", en: "I'm not hungry now." },
+        { id: 30, context: "【Scene01-04 機内食】おなかがすいてきたら", ja: "さっき食べなかったので、今食事をいただけますか？", en: "I didn't eat before so could I have my meal now?" },
+        { id: 31, context: "【Scene01-04 機内食】機内で食べるからこそおいしく感じるんだろうけど", ja: "機内食大好き！", en: "I like in-flight meals very much!" },
+        { id: 32, context: "【Scene01-04 機内食】航空会社のロゴなんかが入っていたら", ja: "ナイフとフォークを記念に持って帰ろう", en: "I'll take this knife and fork home as a souvenir." },
+        { id: 33, context: "【Scene01-04 機内食】ナイフやフォークなどをかばんに詰めている友人に", ja: "せこいなあ", en: "You're so stingy." },
+        { id: 34, context: "【Scene01-04 機内食】食事がおわるとフライトアテンダントにこう聞かれます。", ja: "終わられましたか？", en: "Have you finished?" },
+        { id: 35, context: "【Scene01-04 機内食】食後はコーヒーのポットを持ったフライトアテンダントが", ja: "コーヒーはいかがですか？", en: "Would you like some coffee?" },
+
+        // --- 05 到着するまで ---
+        { id: 36, context: "【Scene01-05 到着まで】到着間近になったら用意しておきましょう。", ja: "出入国カードをいただけますか？", en: "Could you give me an immigration form?" },
+        { id: 37, context: "【Scene01-05 到着まで】カードの書き方がわからないときは", ja: "この用紙の記入の仕方を教えていただけますか？", en: "Could you tell me how to fill out this form?" },
+        { id: 38, context: "【Scene01-05 到着まで】そろそろ時計を合わせておきましょう。", ja: "現地時間は何時ですか？", en: "What's the local time?" },
+        { id: 39, context: "【Scene01-05 到着まで】到着時刻を聞くときは", ja: "ニューヨーク（New York）には何時に着きますか？", en: "What time will we be arriving in New York?" },
+        { id: 40, context: "【Scene01-05 到着まで】乗り継ぎ便がひかえているときは", ja: "時間どおりに着きそうですか？", en: "Will we arrive on time?" },
+        { id: 41, context: "【Scene01-05 到着まで】フライトアテンダントが言うことには", ja: "あいにく１時間ほど遅れそうです", en: "I'm afraid we will be about an hour late." },
+        { id: 42, context: "【Scene01-05 到着まで】乗り継ぎ便までの時間があまりないときは", ja: "乗り継ぎ便に間に合うでしょうか？", en: "Will I be able to catch my connecting flight?" },
+        { id: 43, context: "【Scene01-05 到着まで】着陸するときに言われることは", ja: "座席を元の位置にお戻しください", en: "Return your seat back, please." },
+        { id: 44, context: "【Scene01-05 到着まで】飛行機を降りるときには、この一言とThank youが言えると感じが良いです。", ja: "楽しいフライトでした", en: "I enjoyed the flight." },
+        { id: 45, context: "【Scene01-05 到着まで】着陸の瞬間はドキドキするものです。", ja: "なんてスムーズな着陸！", en: "What a smooth landing!" },
+
+        // --- 06 トランジットとトランスファー ---
+        { id: 46, context: "【Scene01-06 乗り継ぎ】トランジット便のときの質問 その１", ja: "客室に荷物を置いたままでいいですか？", en: "May I leave my baggage in the cabin?" },
+        { id: 47, context: "【Scene01-06 乗り継ぎ】トランジット便のときの質問 その２", ja: "この空港にはどれくらい止まりますか？", en: "How long will we be at this airport?" },
+        { id: 48, context: "【Scene01-06 乗り継ぎ】トランスファーの手続き方法や行くべき場所がわからないときは、係員にこう伝えてみましょう。", ja: "ＡＡ１７８便に乗り継ぐのですが", en: "I'm transferring to flight AA178." },
+        { id: 49, context: "【Scene01-06 乗り継ぎ】乗り継ぎ便の行き先を伝えるときは", ja: "ニューヨーク（New York）に乗り継ぎます", en: "I'm transferring to New York." },
+        { id: 50, context: "【Scene01-06 乗り継ぎ】乗り継ぎ便に乗り遅れてしまったら", ja: "乗り継ぎ便に乗り遅れてしまいました", en: "I missed my connecting flight." },
+        { id: 51, context: "【Scene01-06 乗り継ぎ】航空会社の事情で遅れた場合は、すみやかに代替便を手配してもらえます。", ja: "別の便に乗せていただけますか？", en: "Could you put me on another flight?" },
+
+        // --- 07 入国審査Ｑ＆Ａ ---
+        { id: 52, context: "【Scene01-07 入国審査】\"Passport, please.\"と言われたり、無言で手を差し出されたら、パスポートを渡します。", ja: "はい、どうぞ", en: "Here you are." },
+        { id: 53, context: "【Scene01-07 入国審査】入国審査のきまり文句 その１", ja: "訪問の目的は？", en: "What's the purpose of your visit?" },
+        { id: 54, context: "【Scene01-07 入国審査】入国審査の答え例 その１", ja: "観光です", en: "For sightseeing." },
+        { id: 55, context: "【Scene01-07 入国審査】入国審査のきまり文句 その２", ja: "どこに滞在する予定ですか？", en: "Where are you going to stay?" },
+        { id: 56, context: "【Scene01-07 入国審査】入国審査の答え例 その２", ja: "ヒルトンホテル（the Hilton Hotel）です", en: "At the Hilton Hotel." },
+        { id: 57, context: "【Scene01-07 入国審査】入国審査のきまり文句 その３", ja: "どれくらい滞在する予定ですか？", en: "How long are you going to stay?" },
+        { id: 58, context: "【Scene01-07 入国審査】入国審査の答え例 その３", ja: "１週間です", en: "For a week." },
+        { id: 59, context: "【Scene01-07 入国審査】入国審査のきまり文句 その４", ja: "ご職業は何ですか？", en: "What's your occupation?" },
+        { id: 60, context: "【Scene01-07 入国審査】入国審査の答え例 その４", ja: "会社員です", en: "I'm an office worker." },
+
+        // --- 08 手荷物引取り～税関検査 ---
+        { id: 61, context: "【Scene01-08 荷物・税関】Baggage Claim（手荷物引取所） railwayにて、いつまでたっても自分の荷物が出てこなかったら", ja: "荷物が見つかりません", en: "I can't find my baggage." },
+        { id: 62, context: "【Scene01-08 荷物・税関】荷物を預けたときにもらった引換証を渡しましょう。", ja: "これが荷物引換証です", en: "Here is my claim tag." },
+        { id: 63, context: "【Scene01-08 荷物・税関】スーツケースがないと本当に困るので", ja: "至急調べていただけますか？", en: "Could you check on it right away?" },
+        { id: 64, context: "【Scene01-08 荷物・税関】当面滞在するために", ja: "身の回りの物が必要なんです", en: "I need some daily necessities." },
+        { id: 65, context: "【Scene01-08 荷物・税関】いろいろと買いそろえなくてはならないけど", ja: "その代金を払ってくれますか？", en: "Will you pay for them?" },
+        { id: 66, context: "【Scene01-08 荷物・税関】出てきたスーツケースが壊れていたら", ja: "スーツケースが壊れています", en: "My suitcase is broken." },
+        { id: 67, context: "【Scene01-08 荷物・税関】税関にて聞かれること", ja: "何か申告するものはありますか？", en: "Do you have anything to declare?" },
+        { id: 68, context: "【Scene01-08 荷物・税関】申告するものがないときは", ja: "申告するものはありません", en: "I have nothing to declare." },
+        { id: 69, context: "【Scene01-08 荷物・税関】こんなことを言われるときもあります。", ja: "このかばんを開けてください", en: "Please open this bag." },
+        { id: 70, context: "【Scene01-08 荷物・税関】新品の電化製品やブランド品は、販売目的とみなされることがあるので注意が必要です。", ja: "すべて私物です", en: "These are all my personal belongings." },
+        { id: 71, context: "【Scene01-08 荷物・税関】糖衣錠でない、においのキツイ腹痛の薬をあやしがられたら", ja: "これは日本の腹痛の薬です", en: "This is Japanese stomach medicine." },
+
+        // --- 09 目的地到着！まずは両替しよう ---
+        { id: 72, context: "【Scene01-09 両替】長いフライトや手続きを経てようやく目的地に着いたら", ja: "ついに着いたね！", en: "We're here at last!" },
+        { id: 73, context: "【Scene01-09 両替】乱気流にまきこまれたりして", ja: "飛行機けっこう揺れたね", en: "We had a rough flight, didn't we?" },
+        { id: 74, context: "【Scene01-09 両替】緯度がちがうと、やっぱり", ja: "気候が日本とは全然ちがう", en: "The weather is so different from Japan." },
+        { id: 75, context: "【Scene01-09 両替】うっかり友人とはぐれてしまったら", ja: "友達を呼び出していただけますか？", en: "Could you page my friend?" },
+        { id: 76, context: "【Scene01-09 両替】まずは当面使う分のお金を両替しておきましょう。", ja: "これをドルに両替していただけますか？", en: "Could you exchange this into dollars?" },
+        { id: 77, context: "【Scene01-09 両替】トラベラーズチェックを換金することもできます。", ja: "トラベラーズチェックを換金していただけますか？", en: "Could you cash some traveler's checks?" },
+        { id: 78, context: "【Scene01-09 両替】両替をお願いするとこのように聞かれることがあります。", ja: "どのようにしますか？", en: "How would you like it?" },
+        { id: 79, context: "【Scene01-09 両替】金種の希望を伝えよう その１", ja: "２０ドル札で", en: "In twenties." },
+        { id: 80, context: "【Scene01-09 両替】金種の希望を伝えよう その２", ja: "１０ドル札と、あとは硬貨でください", en: "Ten dollar bills and the rest in change, please." },
+        { id: 81, context: "【Scene01-09 両替】両替するときに気にすることは", ja: "今日のレートはどれくらいですか？", en: "What's the exchange rate today?" },
+
+        // --- Scene02-01 タクシーでホテルへ向かおう ---
+        { id: 82, context: "【Scene02-01 タクシー】言わなくても入れてもらえると思いますが、気の利かないドライバーもいるかもしれないので", ja: "これ、トランクに入れてもいいですか？", en: "Can I put this in the trunk?" },
+        { id: 83, context: "【Scene02-01 タクシー】タクシーに乗り込むと聞かれます。", ja: "どちらまで？", en: "Where to?" },
+        { id: 84, context: "【Scene02-01 タクシー】ドライバーに行き先を伝えましょう。", ja: "ヒルトンホテルまでお願いします", en: "To the Hilton Hotel, please." },
+        { id: 85, context: "【Scene02-01 タクシー】あらかじめ料金を聞いておくと安心です。", ja: "料金はどれくらいかかりますか？", en: "About how much will it cost?" },
+        { id: 86, context: "【Scene02-01 タクシー】降ろしてほしいポイントに来たら", ja: "ここで止めてください", en: "Please stop here." },
+        { id: 87, context: "【Scene02-01 タクシー】おつりをチップとして渡したいときは", ja: "おつりは取っておいてください", en: "Keep the change." },
+        { id: 88, context: "【Scene02-01 タクシー】チップをあげたいけど高額紙幣しかないときは、チップ分を差し引いたおつりを請求します。", ja: "５ドル返してください", en: "Give me five dollars back, please." },
+        { id: 89, context: "【Scene02-01 タクシー】領収書が必要なときは", ja: "領収書をいただけますか？", en: "Could you give me a receipt?" },
+        { id: 90, context: "【Scene02-01 タクシー】悪質ドライバーに相場より高い料金を請求されたら", ja: "ふっかけてるでしょ", en: "You are overcharging." },
+        { id: 91, context: "【Scene02-01 タクシー】悪質ドライバーがおつりを着服しようとしたら", ja: "おつりをください", en: "Give me the change, please." },
+
+        // --- Scene02-02 チェックインして部屋に到着！ ---
+        { id: 92, context: "【Scene02-02 チェックイン】ホテル到着。地下鉄の駅から近くて観光名所へアクセスしやすそうです。", ja: "ホテルが便利な場所にあってよかった", en: "We're lucky the hotel is in a convenient area." },
+        { id: 93, context: "【Scene02-02 チェックイン】チェックインするときは", ja: "チェックインお願いします", en: "I'd like to check in." },
+        { id: 94, context: "【Scene02-02 チェックイン】ちょっと早い時間についてしまったら", ja: "今チェックインできますか？", en: "Could I check in now?" },
+        { id: 95, context: "【Scene02-02 チェックイン】予約の確認がとれたらこう言われます。", ja: "こちらの宿泊カードに記入していただけますか？", en: "Could you fill out this registration card?" },
+        { id: 96, context: "【Scene02-02 チェックイン】支払方法を聞かれます。", ja: "お支払い方法はどうなさいますか？", en: "How would you like to pay?" },
+        { id: 97, context: "【Scene02-02 チェックイン】カードで払いたいときは", ja: "ビザカードで支払いたいのですが", en: "I'd like to pay with Visa." },
+        { id: 98, context: "【Scene02-02 チェックイン】チェックアウトの時間をあらかじめ聞いておきましょう。", ja: "チェックアウトは何時ですか？", en: "What time is checkout?" },
+        { id: 99, context: "【Scene02-02 チェックイン】朝食の時間も聞いておきましょう。", ja: "朝食は何時にとれますか？", en: "What time can I have breakfast?" },
+        { id: 100, context: "【Scene02-02 チェックイン】ホテルの目の前に湖が広がっています。", ja: "わあ、すごい眺め！", en: "Wow, what a great view!" },
+        { id: 101, context: "【Scene02-02 チェックイン】セイフティボックスの使い方がむずかしそうなときは", ja: "セイフティボックスの使い方を教えていただけますか？", en: "Could you show me how to use the safe?" },
+        { id: 102, context: "【Scene02-02 チェックイン】荷物を運んでくれたポーターには、荷物１個につき１ドルのチップを。", ja: "ありがとう、これはあなたに", en: "Thank you, this is for you." },
+
+        // --- Scene02-03 現地にてホテルを予約する ---
+        { id: 103, context: "【Scene02-03 現地予約】電話、あるいは直接フロントで聞いてみます。", ja: "今夜空き部屋はありますか？", en: "Do you have a room available tonight?" },
+        { id: 104, context: "【Scene02-03 現地予約】部屋の希望を伝えましょう。", ja: "バス付きのツインルームはありますか？", en: "Do you have a twin room with a bath?" },
+        { id: 105, context: "【Scene02-03 現地予約】人気のあるホテルや観光シーズンだと", ja: "すべて満室です", en: "The rooms are fully booked." },
+        { id: 106, context: "【Scene02-03 現地予約】こんなことを言われるかもしれません。", ja: "スイートでしたら空きがあります", en: "We only have suites available." },
+        { id: 107, context: "【Scene02-03 現地予約】その部屋の宿泊費が高すぎるときは", ja: "そんなゆとりはありません", en: "I can't afford it." },
+        { id: 108, context: "【Scene02-03 現地予約】別のホテルを当たってみます。", ja: "１泊いくらですか？", en: "How much is it per night?" },
+        { id: 109, context: "【Scene02-03 現地予約】３泊でいくらになるか聞いてみましょう。", ja: "３泊でいくらですか？", en: "How much is it for three nights?" },
+        { id: 110, context: "【Scene02-03 現地予約】とにかく少しでも安く泊まりたいときは", ja: "一番安い部屋はいくらですか？", en: "How much is the cheapest room?" },
+        { id: 111, context: "【Scene02-03 現地予約】外観から判断してちょっと不安な感じのホテルなら", ja: "部屋を見せていただけますか？", en: "May I see the room, please?" },
+        { id: 112, context: "【Scene02-03 現地予約】このお値段は…", ja: "朝食込みですか？", en: "Is breakfast included?" },
+        { id: 113, context: "【Scene02-03 現地予約】部屋が決まったら、何泊するかを伝えましょう。", ja: "３泊お願いします", en: "For three nights, please." },
+
+        // --- Scene02-04 予約がとれていなかった！ ---
+        { id: 114, context: "【Scene02-04 予約トラブル】予約しているホテルにチェックインします。", ja: "予約しています", en: "I have a reservation." },
+        { id: 115, context: "【Scene02-04 予約トラブル】思わぬアクシデントが発生しました。", ja: "申し訳ありませんが予約は入っていません", en: "I'm sorry but we don't have your reservation." },
+        { id: 116, context: "【Scene02-04 予約トラブル】絶対予約したはずなのに、予約が入っていないと言われたら", ja: "もう一度チェックしていただけますか？", en: "Could you check again?" },
+        { id: 117, context: "【Scene02-04 予約トラブル】予約した経緯を伝えよう その１", ja: "日本から予約をしました", en: "I made the reservation in Japan." },
+        { id: 118, context: "【Scene02-04 予約トラブル】予約した経緯を伝えよう その２", ja: "ネットで予約をしました", en: "I made the reservation over the internet." },
+        { id: 119, context: "【Scene02-04 予約トラブル】予約の証明となるものです。", ja: "これが確認番号です", en: "Here's my confirmation number." },
+        { id: 120, context: "【Scene02-04 予約トラブル】向こうの手違いで予約が取れていなかったら", ja: "どうしてもらえますか？", en: "What are you going to do about it?" },
+        { id: 121, context: "【Scene02-04 予約トラブル】たいてい向こうから紹介してもらえるはずですが、こちらから頼むときは", ja: "この近くの他のホテルを手配していただけますか？", en: "Could you arrange another hotel near here?" },
+        { id: 122, context: "【Scene02-04 使うトラブル】代わりのホテルを手配してもらったら、確認します。", ja: "ここと同等のホテルですか？", en: "Is it equivalent to this hotel?" },
+        { id: 123, context: "【Scene02-04 予約トラブル】遠くにあるホテルしか手配してもらえなかったら", ja: "タクシー代を払ってくれますか？", en: "Will you pay for the taxi fare?" },
+
+        // --- Scene02-05 Ｂ＆Ｂに泊まってみよう ---
+        { id: 124, context: "【Scene02-05 Ｂ＆Ｂ】たいてい入り口に表示がありますが、念のため。", ja: "空きはありますか？", en: "Do you have any vacancies?" },
+        { id: 125, context: "【Scene02-05 Ｂ＆Ｂ】向こうからこのように言ってくれることが多いです。", ja: "部屋をご覧になりますか？", en: "Would you like to see the rooms?" },
+        { id: 126, context: "【Scene02-05 Ｂ＆Ｂ】高級そうなアンティークをふんだんに使用した部屋に通されたら", ja: "わあ、豪華なお部屋！", en: "Wow, what a gorgeous room!" },
+        { id: 127, context: "【Scene02-05 Ｂ＆Ｂ】宿泊費が予算オーバーだったら", ja: "もう少し安い部屋はありますか？", en: "Do you have a less expensive room?" },
+        { id: 128, context: "【Scene02-05 Ｂ＆Ｂ】部屋がちょっとせますぎるようなら", ja: "もう少し大きい部屋はありますか？", en: "Do you have a slightly larger room?" },
+        { id: 129, context: "【Scene02-05 Ｂ＆Ｂ】気に入った部屋が見つかったら", ja: "この部屋にします", en: "I'll take this room." },
+        { id: 130, context: "【Scene02-05 Ｂ＆Ｂ】ガーデニングにもかなり手が行き届いています。", ja: "お庭を見せていただけますか？", en: "Could you show me your garden?" },
+        { id: 131, context: "【Scene02-05 Ｂ＆Ｂ】庭の手入れをしているオーナーに声をかけます。", ja: "お庭のお手入れが行き届いていますね", en: "You look after your garden very well, don't you?" },
+        { id: 132, context: "【Scene02-05 Ｂ＆Ｂ】家族経営のＢ＆Ｂなら、帰宅すべき時間を聞いてからでかけましょう。", ja: "何時までに戻ればいいですか？", en: "What time should I be back by?" },
+        { id: 133, context: "【Scene02-05 Ｂ＆Ｂ】オーナーがすばらしい手料理でもてなしてくれたら", ja: "おもてなしありがとう", en: "Thank you for your hospitality." },
+        { id: 134, context: "【Scene02-05 Ｂ＆Ｂ】滞在が気に入ったのなら、出発するときに感想を述べましょう。", ja: "ここでの滞在、本当に楽しかったです", en: "I really enjoyed my stay here." },
+
+        // --- Scene02-06 いろいろなサービスを活用する ---
+        { id: 135, context: "【Scene02-06 サービス活用】ホテルのフロントでパスポートなどの貴重品を預けたいときは", ja: "金庫に預けたい物があるのですが", en: "I'd like to put some things in the safe." },
+        { id: 136, context: "【Scene02-06 サービス活用】外出先からもどったら、預けておいたカギを引き取ります。", ja: "６２０号室のカギをお願いします", en: "I'd like the key to room 620, please." },
+        { id: 137, context: "【Scene02-06 サービス活用】預けていた貴重品を引き取りたいときは", ja: "金庫から私物を出していただきたいのですが", en: "I'd like to get my things out of the safe." },
+        { id: 138, context: "【Scene02-06 サービス活用】ドライヤーのついていないホテルでも、フロントで借りられる場合があります。", ja: "ドライヤーを貸していただけますか？", en: "Could I borrow a drier?" },
+        { id: 139, context: "【Scene02-06 サービス活用】部屋から電話をかけるときは、まず部屋番号を言いましょう。", ja: "６２０号室です", en: "This is room 620." },
+        { id: 140, context: "【Scene02-06 サービス活用】洗濯サービスを利用しよう その１", ja: "洗濯物を取りに来ていただけますか？", en: "Could you come to pick up my laundry?" },
+        { id: 141, context: "【Scene02-06 サービス活用】洗濯サービスを利用しよう その２", ja: "スーツをドライクリーニングしてほしいのですが", en: "I'd like to have my suits dry-cleaned." },
+        { id: 142, context: "【Scene02-06 サービス活用】仕上がり日を聞いておきます。", ja: "いつ仕上がりますか？", en: "When will it be ready?" },
+        { id: 143, context: "【Scene02-06 サービス活用】明日必要なら、あらかじめ伝えておきましょう。", ja: "明日までにいただけますか？", en: "Could I have it by tomorrow?" },
+        { id: 144, context: "【Scene02-06 サービス活用】目覚ましだけでは不安なときは", ja: "明日の朝７時にモーニングコールをお願いします", en: "I'd like a wake-up call at seven tomorrow morning." },
+        { id: 145, context: "【Scene02-06 サービス活用】ちょっと小腹がすいたときには", ja: "ルームサービスを頼みたいのですが", en: "I'd like to order room service." },
+        { id: 146, context: "【Scene02-06 サービス活用】ついうっかりくり返してしまう失敗", ja: "鍵を部屋に置いたまま出てしまいました", en: "I'm locked out of my room." },
+
+        // --- Scene02-07 コンシェルジュを活用する ---
+        { id: 147, context: "【Scene02-07 コンシェルジュ】何か聞きたいことを切り出すときのフレーズ", ja: "ちょっとお聞きしていいですか？", en: "May I ask you something?" },
+        { id: 148, context: "【Scene02-07 コンシェルジュ】地元情報はコンシェルジュに聞くのが確実です。", ja: "この辺りでいいレストランをご存知ですか？", en: "Do you know any good restaurants around here?" },
+        { id: 149, context: "【Scene02-07 コンシェルジュ】さらにていねいに言いたいときは", ja: "この辺りのいいレストランを紹介していただけませんか？", en: "Could you recommend a good restaurant around here?" },
+        { id: 150, context: "【Scene02-07 コンシェルジュ】あまり高級レストランだと手が出ないので", ja: "お値段の手ごろなレストランを教えていただけますか？", en: "Could you tell me a reasonably priced restaurant?" },
+        { id: 151, context: "【Scene02-07 コンシェルジュ】ありそうで見つからない", ja: "アフタヌーンティーをいただける所を教えていただけますか？", en: "Could you tell me somewhere I can have afternoon tea?" },
+        { id: 152, context: "【Scene02-07 コンシェルジュ】頼み事を切り出すときのフレーズ", ja: "ちょっとお願いしたいのですが", en: "Could you do me a favor?" },
+        { id: 153, context: "【Scene02-07 コンシェルジュ】「××の試合が観たいです」「△△のミュージカルが観たいです」「○○のレストランへ行きたいです」と伝えた上で", ja: "予約をしていただけたらと思うのですが", en: "I wonder if you could make a reservation for me." },
+        { id: 154, context: "【Scene02-07 コンシェルジュ】フライトのリコンファームの代行、お店の紹介、道案内レベルのことをしてもらったら", ja: "ありがとう、助かりました", en: "Thank you for your help." },
+        { id: 155, context: "【Scene02-07 コンシェルジュ】入手困難なチケットを取ってもらったりしたら、感激の涙を浮かべて", ja: "本当に感謝しています", en: "I really appreciate your help." },
+        { id: 156, context: "【Scene02-07 コンシェルジュ】チップを渡してもよいものか判断に迷うときは、差し出しながらこう言って見みましょう。", ja: "心づけをお受け取りください", en: "Please accept this gratuity." },
+
+        // --- Scene02-08 クレームを言う（部屋の不備・不満） ---
+        { id: 157, context: "【Scene02-08 部屋の不備】部屋に何か不備があったときは", ja: "フロントに電話して文句を言うよ", en: "I'll call the front desk and complain." },
+        { id: 158, context: "【Scene02-08 部屋の不備】部屋の不備 その１", ja: "シャンプーがありません", en: "There isn't any shampoo." },
+        { id: 159, context: "【Scene02-08 部屋の不備】何か足りない物があるときは", ja: "持ってきていただけますか？", en: "Could you bring it?" },
+        { id: 160, context: "【Scene02-08 部屋の不備】部屋の不備 その２", ja: "まだ部屋が掃除されていません", en: "The room hasn't been cleaned yet." },
+        { id: 161, context: "【Scene02-08 部屋の不備】部屋の不備 その３", ja: "タオルが交換されていません", en: "The towels haven't been changed." },
+        { id: 162, context: "【Scene02-08 部屋の不備】部屋の不備 その４", ja: "ベッドのシーツが交換されていません", en: "The bed sheets haven't been changed." },
+        { id: 163, context: "【Scene02-08 部屋の不備】騒音がすごくて眠れないときは", ja: "部屋がうるさくて眠れません", en: "The room is too noisy to sleep in." },
+        { id: 164, context: "【Scene02-08 部屋の不備】部屋を変えてほしいときは", ja: "部屋を変えていただけますか？", en: "Could you give me another room?" },
+        { id: 165, context: "【Scene02-08 部屋の不備】部屋の希望を伝えましょう。", ja: "静かな部屋がいいです", en: "I'd like a quiet room." },
+        { id: 166, context: "【Scene02-08 部屋の不備】部屋が１階にあって散歩中の人と目が合ってしまうようなときは", ja: "もっと上の階に移動できたらと思うのですが", en: "I wonder if I could move to an upper floor." },
+        { id: 167, context: "【Scene02-08 部屋の不備】せっかく湖に面したホテルなのに、死角にある部屋にあたってしまったら", ja: "湖の見える部屋がいいのですが", en: "I'd like a room with a lake view." },
+
+        // --- Scene02-09 クレームを言う（設備の故障） ---
+        { id: 168, context: "【Scene02-09 設備の故障】クレームの電話をするときは、まずは部屋の番号を伝えた上で", ja: "ちょっと問題がありまして", en: "I have a problem." },
+        { id: 169, context: "【Scene02-09 設備の故障】クレーム その１", ja: "お湯が出ません", en: "There's no hot water." },
+        { id: 170, context: "【Scene02-09 設備の故障】クレーム その２", ja: "エアコンが動きません", en: "The air conditioner doesn't work." },
+        { id: 171, context: "【Scene02-09 設備の故障】クレーム その３", ja: "トイレの水が流れません", en: "The toilet doesn't flush." },
+        { id: 172, context: "【Scene02-09 設備の故障】クレーム その４", ja: "トイレの水が止まりません", en: "The toilet won't stop running." },
+        { id: 173, context: "【Scene02-09 設備の故障】クレーム その５", ja: "電気が切れています", en: "The light is burnt-out." },
+        { id: 174, context: "【Scene02-09 設備の故障】故障しているものを直してもらいたいときは", ja: "直していただけますか？", en: "Could you fix it?" },
+        { id: 175, context: "【Scene02-09 設備の故障】すぐに直してもらいたいなら", ja: "すぐに直してください", en: "Please fix it immediately." },
+
+        // --- Scene02-10 部屋の中でよくある会話 ---
+        { id: 176, context: "【Scene02-10 部屋の会話】ほとんど丸一日にもおよぶ長～いフライトで", ja: "もうクタクタ", en: "I'm exhausted." },
+        { id: 177, context: "【Scene02-10 部屋の会話】いい時間だというのにまったく眠くなりません。これは", ja: "時差ぼけだ", en: "I have jet lag." },
+        { id: 178, context: "【Scene02-10 部屋の会話】海外旅行慣れしている友人いわく", ja: "時差ぼけには免疫があるみたい", en: "I seem to be immune to jet lag." },
+        { id: 179, context: "【Scene02-10 部屋の会話】時差ぼけなのはわかるけど", ja: "寝ないと明日がキツイよ", en: "Go to bed or you'll have a rough day tomorrow." },
+        { id: 180, context: "【Scene02-10 部屋の会話】思っていたより天気が良かったので", ja: "日焼けしちゃった", en: "I got sunburned." },
+        { id: 181, context: "【Scene02-10 部屋の会話】キレイな小麦色の肌になった友人に", ja: "よく日に焼けてるね", en: "You have a nice tan." },
+        { id: 182, context: "【Scene02-10 部屋の会話】紫外線が意外とキツイ国なので", ja: "明日は日焼け止めを塗った方がいいよ", en: "You should put on some sun block tommorow." },
+        { id: 183, context: "【Scene02-10 部屋の会話】誰かにドアをノックされたら、いきなり開けずに", ja: "どなたですか？", en: "Who is it?" },
+        { id: 184, context: "【Scene02-10 部屋の会話】知らない人が「入れてくれ」と言ってきたら", ja: "部屋をお間違えのようです", en: "You must have the wrong room." },
+        { id: 185, context: "【Scene02-10 部屋の会話】\"Room Service.（ルームサービスです）\"と言われたら", ja: "どうぞ入ってください", en: "Come in, please." },
+        { id: 186, context: "【Scene02-10 部屋の会話】ルームサービス代は…", ja: "部屋につけておいてください", en: "Please charge it to my room." },
+        { id: 187, context: "【Scene02-10 部屋の会話】寝るときは戸じまりをしっかりと。", ja: "ドアチェーンをかけるのを忘れないでね", en: "Don't forget to use the door chain." },
+
+        // --- Scene02-11 チェックアウトする・しない？ ---
+        { id: 188, context: "【Scene02-11 チェックアウト】この土地がすっかり気に入ってしまったので", ja: "もう一泊できるでしょうか？", en: "Could I stay here one more night?" },
+        { id: 189, context: "【Scene02-11 チェックアウト】午前中もうすこし観光をしたいので", ja: "２時まで滞在できるでしょうか？", en: "Could I stay till two o'clock?" },
+        { id: 190, context: "【Scene02-11 チェックアウト】２時まで滞在したいとお願いしたら、こんなことを言われてしまいました。", ja: "５０％の追加料金がかかります", en: "There will be an additional 50 percent charge." },
+        { id: 191, context: "【Scene02-11 チェックアウト】チェックアウトしたものの、もう少し観光してから出発したいときは", ja: "荷物を２時まで預かっていただけますか？", en: "Could you keep my baggage until two o'clock?" },
+        { id: 192, context: "【Scene02-11 チェックアウト】荷物を預かってもらうと渡されます。", ja: "こちらが引換券です", en: "This is your baggage ticket." },
+        { id: 193, context: "【Scene02-11 チェックアウト】一度もかけていないのに電話代を請求されたら", ja: "電話はかけていません", en: "I didn't make any phone calls." },
+        { id: 194, context: "【Scene02-11 チェックアウト】請求書が間違っていたら", ja: "請求書に間違いがあります", en: "There is a mistake on this bill." },
+        { id: 195, context: "【Scene02-11 チェックアウト】請求書の明細を見て、よくわからない料金が追加されていたら", ja: "この請求は何ですか？", en: "What's this for?" },
+        { id: 196, context: "【Scene02-11 チェックアウト】明細書なしに合計金額だけ言われたら、念のため", ja: "明細をいただけますか？", en: "Could you give me an itemized bill?" },
+        { id: 197, context: "【Scene02-11 チェックアウト】ホテルからタクシーを使いたいときは", ja: "タクシーを呼んでいただけますか？", en: "Could you call a taxi?" },
+
+        // --- Scene03-01 ツーリストインフォメーションを利用しよう ---
+        { id: 198, context: "【Scene03-01 インフォメーション】外へ出ると、雲ひとつない観光日和。", ja: "すばらしい天気だね", en: "It's lovely weather, isn't it?" },
+        { id: 199, context: "【Scene03-01 インフォメーション】効率のよい観光をするためにも", ja: "まずはツーリストインフォメーションで地図をもらおう", en: "First, let's get a map from tourist information." },
+        { id: 200, context: "【Scene03-01 インフォメーション】まずは見所を聞いてみましょう。", ja: "見所はどこですか？", en: "Where are the interesting spots?" },
+        { id: 201, context: "【Scene03-01 インフォメーション】もっとていねいに聞きたいときは", ja: "見所を教えていただけますか？", en: "Could you tell me where the interesting spots are?" },
+        { id: 202, context: "【Scene03-01 インフォメーション】場所を聞いたら、そこへの行き方も聞いておきましょう。", ja: "行き方を教えていただけますか？", en: "Could you tell me how to get there?" },
+        { id: 203, context: "【Scene03-01 インフォメーション】長距離バスは経済的なので、できれば上手に利用したいもの。", ja: "ロサンゼルスまで長距離バスで行けますか？", en: "Can we go to Los Angeles by bus?" },
+        { id: 204, context: "【Scene03-01 インフォメーション】交通機関、いくつか選択肢があるときは", ja: "バスと地下鉄だとどちらが速いですか？", en: "Which is faster, the bus or the subway?" },
+        { id: 205, context: "【Scene03-01 インフォメーション】少しでも安く行く方法が知りたいときは", ja: "メキシコへ行く一番安い方法を教えていただけますか？", en: "Could you tell me the cheapest way to get to Mexico?" },
+        { id: 206, context: "【Scene03-01 インフォメーション】\"I'd like to try jet-skiing/scuba diving/surfing.\"などと希望を伝えた上で", ja: "オススメのすてきなビーチを教えていただけますか？", en: "Could you recommend a nice beach?" },
+        { id: 207, context: "【Scene03-01 インフォメーション】行きたいところ、やりたいことを伝えたあとで", ja: "それに関する情報をいただけますか？", en: "Could you give me some information on that?" },
+        { id: 208, context: "【Scene03-01 インフォメーション】もらっておくと便利なアイテム その１", ja: "バスの時刻表をもらえますか？", en: "May I have a bus schedule?" },
+        { id: 209, context: "【Scene03-01 インフォメーション】もらっておくと便利なアイテム その２", ja: "地下鉄路線図をもらえますか？", en: "May I have a subway map?" },
+
+        // --- Scene03-02 道に迷ってしまったら ---
+        { id: 210, context: "【Scene03-02 道に迷う】パリのストリートは放射状にのびていて", ja: "この街は迷路みたいだ！", en: "This city is like a maze!" },
+        { id: 211, context: "【Scene03-02 道に迷う】行けども行けども目的地にたどり着けない。", ja: "道に迷っちゃった", en: "I lost my way." },
+        { id: 212, context: "【Scene03-02 道に迷う】地図も全くたよりにならず。", ja: "自分が今どこにいるのか全然わからないよ", en: "I have no idea where I am." },
+        { id: 213, context: "【Scene03-02 道に迷う】地図で自分のいる場所を示してもらいましょう。", ja: "この地図で私はどこにいますか？", en: "Where am I on this map?" },
+        { id: 214, context: "【Scene03-02 道に迷う】もっとていねいに頼みたいときは", ja: "私のいる場所をこの地図で示していただけますか？", en: "Could you show me where I am on this map?" },
+        { id: 215, context: "【Scene03-02 道に迷う】このように教えてくれるはずです。", ja: "あなたはこの地図でここにいます", en: "You're here on this map." },
+        { id: 216, context: "【Scene03-02 道に迷う】通りの名前が見当たらないので、地元の人に教えてもらいましょう。", ja: "この通りの名前は何ですか？", en: "What's the name of this street?" },
+        { id: 217, context: "【Scene03-02 道に迷う】地下鉄に乗りたいけれど駅が見当たらないときは", ja: "最寄りの地下鉄の駅はどこですか？", en: "Wnere is the nearest subway station?" },
+        { id: 218, context: "【Scene03-02 道に迷う】もう少していねいに聞きたいときは", ja: "最寄りの地下鉄の駅がどこにあるかご存知ですか？", en: "Do you know where the nearest subway station is?" },
+        { id: 219, context: "【Scene03-02 道に迷う】道を聞いたときの回答例 その１", ja: "この通りをまっすぐ行けば、右手に見えますよ", en: "Go along this street, and you'll find it on your right." },
+        { id: 220, context: "【Scene03-02 道に迷う】道を聞いたときの回答例 その２", ja: "この通りを２ブロックまっすぐ行ってください", en: "Go straight on this street for two blocks." },
+        { id: 221, context: "【Scene03-02 道に迷う】道を聞いたときの回答例 その３", ja: "すぐわかりますよ", en: "You can't miss it." },
+
+        // --- Scene03-03 目的地への行き方を聞こう ---
+        { id: 222, context: "【Scene03-03 行き方を聞く】バス停が近くにいくつもあってわかりづらいときは", ja: "ダウンタウンへのバス停はどこですか？", en: "Where is the bus stop for downtown?" },
+        { id: 223, context: "【Scene03-03 行き方を聞く】「バス停はどこですか？」と聞かれたら", ja: "あそこです", en: "It's over there." },
+        { id: 224, context: "【Scene03-03 行き方を聞く】方向音痴な私。歩いているうちに不安になってきました…", ja: "セイフコフィールドはこっちであってますか？", en: "Is this the right direction to Safeco Field?" },
+        { id: 225, context: "【Scene03-03 行き方を聞く】行きたい場所を伝えたあとで その１", ja: "ここから遠いですか？", en: "Is it far from here?" },
+        { id: 226, context: "【Scene03-03 行き方を聞く】行きたい場所を伝えたあとで その２", ja: "歩いて行けますか？", en: "Can I walk there?" },
+        { id: 227, context: "【Scene03-03 行き方を聞く】「歩いて行けますか？」と聞いたときに予想される解答例 その１", ja: "歩くには遠すぎます", en: "It's too far to walk." },
+        { id: 228, context: "【Scene03-03 行き方を聞く】「歩いて行けますか？」と聞いたときに予想される解答例 その２", ja: "バスに乗った方がいいですよ", en: "You should take a bus." },
+        { id: 229, context: "【Scene03-03 行き方を聞く】１時間以内で行けるなら歩いて行ってみたいなあ、などと思ったら", ja: "徒歩でどれくらいかかりますか？", en: "How long does it take to go there on foot?" },
+        { id: 230, context: "【Scene03-03 行き方を聞く】目的地までの所要時間を聞いたときに予想される解答例", ja: "３０分くらいかかります", en: "It takes about thirty minutes." },
+        { id: 231, context: "【Scene03-03 行き方を聞く】地元の人とまちがわれて（？）道を聞かれてしまいました。", ja: "すみません、地元の人間じゃないんです", en: "I'm sorry but I'm not from around here." },
+
+        // --- Scene03-04 美術館・博物館へ行ってみよう ---
+        { id: 232, context: "【Scene03-04 美術館・博物館】開館日・開館時間をチェックしてから向かいましょう。", ja: "メトロポリタン美術館は今日開いてますか？", en: "Is the Metropolitan Museum of Art open today?" },
+        { id: 233, context: "【Scene03-04 美術館・博物館】有料のところと無料のところがありますが", ja: "入場料はいくらですか？", en: "How much is admission?" },
+        { id: 234, context: "【Scene03-04 美術館・博物館】チケットを購入します。", ja: "大人２枚ください", en: "Two adults, please." },
+        { id: 235, context: "【Scene03-04 美術館・博物館】どんな美術館にもたいてい置いてありますが", ja: "日本語のパンフレットはありますか？", en: "Do you have any brochures in Japanese?" },
+        { id: 236, context: "【Scene03-04 美術館・博物館】美術館みやげを何にしようか悩んでいる友人に", ja: "美術館のロゴが入ったグッズがオススメだよ", en: "I recommend the goods with the museum logo on them." },
+        { id: 237, context: "【Scene03-04 美術館・博物館】入場料をとる博物館もあるけれど", ja: "大英博物館はタダで入れるよ", en: "Admission to the British Museum is free." },
+        { id: 238, context: "【Scene03-04 美術館・博物館】ちゃんと下調べをしないとこういうことに。", ja: "わざわざここまで来たのに閉まってるよ", en: "We came all the way here and it's closed." },
+        { id: 239, context: "【Scene03-04 美術館・博物館】写真撮影ＯＫでも、フラッシュはＮＧというところもあります。", ja: "フラッシュ撮影してもいいですか？", en: "May I take a picture with a flash?" },
+        { id: 240, context: "【Scene03-04 美術館・博物館】写真撮影ＯＫでも、ビデオはＮＧというところもあります。", ja: "ビデオを撮ってもいいですか？", en: "May I take a video?" },
+
+        // --- Scene03-05 ローカル／ファーストフードを食べよう ---
+        { id: 241, context: "【Scene03-05 ファーストフード】サンフランシスコに来たらやっぱり", ja: "フィッシャーマンズ・ワーフは絶対外せないね", en: "Fisherman's Wharf is an absolute must see." },
+        { id: 242, context: "【Scene03-05 ファーストフード】新鮮な生ガキはやっぱりちがいます。", ja: "本当はカキは苦手なんだけど、これはおいしい！", en: "Actually I don't like oysters, but this is so delicious!" },
+        { id: 243, context: "【Scene03-05 ファーストフード】ファーストフード店にて注文。", ja: "ポテトのＳとコーラのＬをください", en: "One small fries and one large coke, please." },
+        { id: 244, context: "【Scene03-05 ファーストフード】ファーストフード店定番フレーズ", ja: "こちらでお召し上がりですか、それともお持ち帰りですか？", en: "For here or to go?" },
+        { id: 245, context: "【Scene03-05 ファーストフード】どうせならその土地の名物を食べたいもの。", ja: "せっかくイギリスにいるんだから、フィッシュ＆チップスを食べなきゃ", en: "We should eat Fish and Chips since we're in England." },
+        { id: 246, context: "【Scene03-05 ファーストフード】ポテトにはケチャップをつけずにはいられないんです。", ja: "ケチャップはありますか？", en: "Do you have any ketchup?" },
+        { id: 247, context: "【Scene03-05 ファーストフード】お酢はちょっとニガテなのです。", ja: "塩だけかけて、酢はかけないでください", en: "Just salt and no vinegar, please." },
+        { id: 248, context: "【Scene03-05 ファーストフード】フィッシュアンドチップスを頼むと、こんな風に聞かれることがあります。", ja: "このままでいいですか、それとも包みますか？", en: "Open or wrapped?" },
+        { id: 249, context: "【Scene03-05 ファーストフード】露店にならぶ食べ物の数々は", ja: "どれもいいにおい", en: "Everything smells so good." },
+        { id: 250, context: "【Scene03-05 ファーストフード】ホットドッグやプレッツェル、ケバブのにおいがあまりに食欲をそそるので", ja: "屋台の食べ物を食べてみない？", en: "Why don't we try some from one of the street vendors?" },
+        { id: 251, context: "【Scene03-05 ファーストフード】いろいろな選択肢があると迷ってしまいます。", ja: "どれもおいしそう！", en: "They all look good!" },
+        { id: 252, context: "【Scene03-05 ファーストフード】アツアツのストリートフードを", ja: "歩きながら食べるのって楽しいね", en: "It's fun to eat while walking, isn't it?" },
+
+        // --- Scene03-06 写真撮影にまつわるフレーズ集 ---
+        { id: 253, context: "【Scene03-06 写真撮影】美術館や博物館などで写真を撮るときは、写真ＯＫか必ず確認をとりましょう。", ja: "ここで写真を撮ってもいいですか？", en: "May I take pictures here?" },
+        { id: 254, context: "【Scene03-06 写真撮影】誰かに写真を頼みたいときは", ja: "写真を撮っていただけますか？", en: "Could you take my picture, please?" },
+        { id: 255, context: "【Scene03-06 写真撮影】ちょっと細かく指示を入れさせてもらいます。", ja: "あのビルを入れて写真を撮っていただけますか？", en: "Could you take a picture of me with that building?" },
+        { id: 256, context: "【Scene03-06 写真撮影】もう少していねいにお願いしたいときは", ja: "すみませんが写真を撮っていただけませんか？", en: "Would you mind taking my picture?" },
+        { id: 257, context: "【Scene03-06 写真撮影】カメラの扱いに慣れてなさそうな人には", ja: "そのボタンを押すだけです", en: "Just press the button." },
+        { id: 258, context: "【Scene03-06 写真撮影】コスプレしている人や、ストリートでパフォーマンスをしている人の写真を撮りたいときは", ja: "あなたの写真を撮ってもいいですか？", en: "May I take your picture?" },
+        { id: 259, context: "【Scene03-06 写真撮影】コスプレしている人や、ストリートでパフォーマンスをしている人と一緒に写真を撮りたいときは", ja: "あなたと一緒に写真をとってもかまいませんか？", en: "May I take a picture with you?" },
+        { id: 260, context: "【Scene03-06 写真撮影】こういう言い方もあります。", ja: "私たちと一緒に写真に入っていただけませんか？", en: "Could you pose with us?" },
+        { id: 261, context: "【Scene03-06 写真撮影】このかけ声は、万国共通？", ja: "はい、チーズ！", en: "Say cheese!" },
+
+        // --- Scene03-07 現地ツアーを利用しよう ---
+        { id: 262, context: "【Scene03-07 現地ツアー】効率よく見所を回るには、ツアーが便利です。", ja: "何か市内のツアーはありますか？", en: "Do you have any city tours?" },
+        { id: 263, context: "【Scene03-07 現地ツアー】丸一日ツアーでつぶすのは疲れるなあ、というときは", ja: "半日のツアーがいいのですが", en: "I'd like a half-day tour." },
+        { id: 264, context: "【Scene03-07 現地ツアー】具体的に希望を伝えます。", ja: "パリへの１日ツアーがいいのですが", en: "I'd like a one-day tour to Paris." },
+        { id: 265, context: "【Scene03-07 現地ツアー】英語のリスニングは自信がないので…", ja: "日本語を話すガイドをお願いしたいのですが", en: "I'd like a Japanese-speaking guide." },
+        { id: 266, context: "【Scene03-07 現地ツアー】出発地と出発時間を聞いておきます。", ja: "ツアーはいつ、どこから出発しますか？", en: "When and where does the tour start?" },
+        { id: 267, context: "【Scene03-07 現地ツアー】所要時間を聞いてみます。", ja: "ツアーはどれくらいかかりますか？", en: "How long does the tour take?" },
+        { id: 268, context: "【Scene03-07 現地ツアー】戻ってくる時間も聞いておきます。", ja: "何時に戻ってきますか？", en: "What time will we come back?" },
+        { id: 269, context: "【Scene03-07 現地ツアー】とても重要な質問です。", ja: "どんな場所を見るんですか？", en: "What places will we see?" },
+        { id: 270, context: "【Scene03-07 現地ツアー】ツアーによっては食事が出るものもあります。", ja: "食事はついていますか？", en: "Are meals included?" },
+        { id: 271, context: "【Scene03-07 現地ツアー】ツアー以外でも、なにかと使えるフレーズです。", ja: "料金には何が含まれていますか？", en: "What does the price include?" },
+        { id: 272, context: "【Scene03-07 現地ツアー】この図書館、どこかで見たことがあると思ったら…", ja: "『ハリー・ポッター』はここで撮影されたんですか？", en: "Was \"Harry Potter\" filmed here?" },
+        { id: 273, context: "【Scene03-07 現地ツアー】関連グッズをよく目にするけれど", ja: "ここが不思議の国のアリス生誕の地ですか？", en: "Is this the birthplace of \"Alice in Wonderland\"?" },
+
+        // --- Scene04-01 レストランさがしに苦戦！ ---
+        { id: 274, context: "【Scene04-01 レストラン探し】なかなか食べる所が見つからなかったものだから", ja: "お腹がすいて死にそう", en: "I'm starving." },
+        { id: 275, context: "【Scene04-01 レストラン探し】ガイドブックを片手にレストランを探します。", ja: "ガイドブックによるとここがこの辺で一番のレストランらしいよ", en: "The guidebook says this is the best restaurant around here." },
+        { id: 276, context: "【Scene04-01 レストラン探し】お酒好きの私としては、本場のパブにもぜひ足を運んでみたい。", ja: "このパブは地元の人でいっぱいだね", en: "This pub is full of locals." },
+        { id: 277, context: "【Scene04-01 レストラン探し】これだけ人がいるんだから、人気のあるバーなんだろうけど", ja: "地元の人でいっぱいのバーに入るのは勇気がいるなあ", en: "It takes courage to go into a bar full of locals." },
+        { id: 278, context: "【Scene04-01 レストラン探し】ちょっと高級な感じのレストランに入るときは", ja: "このような格好で入れますか？", en: "Can I get in dressed like this?" },
+        { id: 279, context: "【Scene04-01 レストラン探し】高級な感じのレストランでは、当然こう言われます。", ja: "ジーンズはご遠慮ください", en: "No jeans, please." },
+        { id: 280, context: "【Scene04-01 レストラン探し】とにかくお腹がすいているので、めいっぱい食べられそうな", ja: "このバイキングのお店はどう？", en: "How about this buffet restaurant?" },
+        { id: 281, context: "【Scene04-01 レストラン探し】とても人気のあるレストランみたいだけど、やっぱり…", ja: "予約が必要ですか？", en: "Do I need a reservation?" },
+        { id: 282, context: "【Scene04-01 レストラン探し】祈るような気持ちで聞いてみます。", ja: "２名のテーブルは空いてますか？", en: "Do you have a table for two?" },
+        { id: 283, context: "【Scene04-01 レストラン探し】さすがに金曜日の夜ともなると、どこもいっぱいです。", ja: "あいにく満席でございます", en: "I'm afraid all tables are full now." },
+        { id: 284, context: "【Scene04-01 レストラン探し】他のレストランを探すくらいなら、待った方が早いかもしれません。", ja: "長い間待たなければなりませんか？", en: "Will we have to wait for a long time?" },
+        { id: 285, context: "【Scene04-01 レストラン探し】人でいっぱいのレストランを眺めて思うことは", ja: "予約しておくんだった", en: "We should have made a reservation." },
+
+        // --- Scene04-02 ちょっと高級なレストランを予約しよう ---
+        { id: 286, context: "【Scene04-02 レストラン予約】人気のレストランは早めに予約を入れておきましょう。", ja: "今夜７時に２名の予約をしたいのですが", en: "I'd like to make a reservation for two at seven tonight." },
+        { id: 287, context: "【Scene04-02 レストラン予約】夜景のきれいなレストランらしいので", ja: "できれば窓際の席がいいのですが", en: "If possible, I'd prefer a table near the window." },
+        { id: 288, context: "【Scene04-02 レストラン予約】予約をするときに聞かれるのは", ja: "お名前と電話番号をいただけますか？", en: "May I have your name and phone number?" },
+        { id: 289, context: "【Scene04-02 レストラン予約】電話番号を聞かれたので", ja: "ホテルの番号でいいですか？", en: "Is my hotel's number OK?" },
+        { id: 290, context: "【Scene04-02 レストラン予約】ドレスコード（服装の決まり）があるレストランもあります。", ja: "服装の決まりはありますか？", en: "Is there a dress code?" },
+        { id: 291, context: "【Scene04-02 レストラン予約】ドレスコード（服装の決まり）を確認しておこう 女性編", ja: "ズボンでもいいですか？", en: "May I wear slacks?" },
+        { id: 292, context: "【Scene04-02 レストラン予約】ドレスコード（服装の決まり）を確認しておこう 男性編", ja: "ジャケットとネクタイを着用するべきですか？", en: "Should I wear a jacket and tie?" },
+        { id: 293, context: "【Scene04-02 レストラン予約】「ご希望の時間は予約がいっぱいです」と言われたら", ja: "何時なら空いていますか？", en: "What time is available?" },
+        { id: 294, context: "【Scene04-02 レストラン予約】予約しておいたレストランへ行ったら、名前を告げてから", ja: "８時に予約している鈴木です", en: "I have a reservation for Suzuki at eight." },
+
+        // --- Scene04-03 着席～注文まで ---
+        { id: 295, context: "【Scene04-03 着席〜注文】できるウェイターはナイスタイミングで来てくれる。", ja: "ご注文はお決まりになりましたか？", en: "Are you ready to order?" },
+        { id: 296, context: "【Scene04-03 着席〜注文】オーダーをとりに来たウェイターに対して", ja: "すみません、もう少し時間をください", en: "Sorry, we need a little more time." },
+        { id: 297, context: "【Scene04-03 着席〜注文】何が食べたいか決まったら、ウェイトレスをつかまえて", ja: "注文をお願いしていいですか？", en: "Could you take our order?" },
+        { id: 298, context: "【Scene04-03 着席〜注文】今日は少しずついろいろなワインを飲みたいので", ja: "ワインをグラスで注文できますか？", en: "Could I order wine by the glass?" },
+        { id: 299, context: "【Scene04-03 着席〜注文】メニューなんて読めなくても大丈夫。指をさしながら", ja: "これとこれにします", en: "I'll have this and this." },
+        { id: 300, context: "【Scene04-03 着席〜注文】さっきからとても気になっているのですが", ja: "となりの人たちは何を食べてるのかしら", en: "I wonder what the people next to us are having." },
+        { id: 301, context: "【Scene04-03 着席〜注文】「お隣の料理は○○です」と言われたときや、食べたいと思っていた料理を友人が先に注文したときには", ja: "それと同じ物をください", en: "The same for me, please." },
+        { id: 302, context: "【Scene04-03 着席〜注文】海外に来るとどうしても食べ過ぎてしまうけど", ja: "旅行中はダイエットのことは忘れようよ", en: "Let's forget about dieting during this trip." },
+        { id: 303, context: "【Scene04-03 着席〜注文】ステーキをオーダーしたら、聞いてくれます。", ja: "ステーキの焼き具合はどうなさいますか？", en: "How would you like your steak?" },
+        { id: 304, context: "【Scene04-03 着席〜注文】ステーキの焼き具合を聞かれたので", ja: "よく焼いてください", en: "Well-done, please." },
+        { id: 305, context: "【Scene04-03 着席〜注文】ひととおり注文し終えると、ウェイターが", ja: "他にご注文は？", en: "Anything else?" },
+        { id: 306, context: "【Scene04-03 着席〜注文】あとでまた何か注文するかもしれないけど…", ja: "とりあえずそれで", en: "That's all for now." },
+
+        // --- Scene04-04 メニューについていろいろ聞いてみよう ---
+        { id: 307, context: "【Scene04-04 メニューの質問】サラダを注文したら、ドレッシングが選べるとのこと。", ja: "何がありますか", en: "What are the choices?" },
+        { id: 308, context: "【Scene04-04 メニューの質問】あまり多いと食べきれないので、先に聞いておきます。", ja: "これはどれくらいの量ですか？", en: "How big is this?" },
+        { id: 309, context: "【Scene04-04 メニューの質問】メニューを見てもわからない単語が並んでいるときは", ja: "これはどんな料理ですか？", en: "What is this like?" },
+        { id: 310, context: "【Scene04-04 メニューの質問】フライドポテトが食べたい気分なので", ja: "これにフライドポテトはついていますか？", en: "Does this come with fries?" },
+        { id: 311, context: "【Scene04-04 メニューの質問】いろいろついてリーズナブルな", ja: "セットメニューはありますか？", en: "Do you have a set meals?" },
+        { id: 312, context: "【Scene04-04 メニューの質問】今日はアルコールの気分ではないので", ja: "ソフトドリンクはありますか？", en: "Do you have any soft drinks?" },
+        { id: 313, context: "【Scene04-04 メニューの質問】今日は胃が疲れているので", ja: "何か軽めの料理はありますか？", en: "Do you have anything light?" },
+        { id: 314, context: "【Scene04-04 メニューの質問】とりあえず聞いておきましょう。", ja: "今日のスペシャルは何ですか？", en: "What is the special of the day?" },
+
+        // --- Scene04-05 店員さんにオススメ・名物を聞いてみよう ---
+        { id: 315, context: "【Scene04-05 オススメを聞く】何を注文していいか、迷ったらお店の人に聞きましょう。", ja: "オススメは何ですか？", en: "What do you recommend?" },
+        { id: 316, context: "【Scene04-05 オススメを聞く】せっかくなのでその土地の料理を食べてみましょう。", ja: "この土地の名物料理でオススメはありますか？", en: "Could you recommend a local specialty?" },
+        { id: 317, context: "【Scene04-05 オススメを聞く】お店の人オススメの料理を聞いておいしそうだと思ったら その１", ja: "おいしそうですね", en: "That's sounds good." },
+        { id: 318, context: "【Scene04-05 オススメを聞く】お店の人オススメの料理を聞いておいしそうだと思ったら その２", ja: "それにします", en: "I'll have that." },
+        { id: 319, context: "【Scene04-05 オススメを聞く】お店の人オススメの料理を聞いてちょっとそれは…と思ったら", ja: "また今度にします", en: "I'll try it another time." },
+        { id: 320, context: "【Scene04-05 オススメを聞く】お店の人オススメの料理を聞いてちょっとそれは…と思っても", ja: "話の種に食べてみようよ", en: "Let's try it as a conversation piece." },
+        { id: 321, context: "【Scene04-05 オススメを聞く】せっかくなのでその土地のお酒を飲んでみましょう。", ja: "この土地のワインでオススメはありますか？", en: "Could you recommend a local wine?" },
+        { id: 322, context: "【Scene04-05 オススメを聞く】オススメのお酒をテイスティングさせてもらったけど", ja: "ちょっと私には強すぎるみたいです", en: "This is too strong for me." },
+        { id: 323, context: "【Scene04-05 オススメを聞く】オススメのお酒をテイスティングさせてもらって", ja: "すごくおいしいです", en: "This is very good." },
+        { id: 324, context: "【Scene04-05 オススメを聞く】オススメのお酒をテイスティングさせてもらって、思わず", ja: "これは最高！", en: "This is perfect!" },
+        { id: 325, context: "【Scene04-05 オススメを聞く】急ぎの用があるときは、先に伝えておきましょう。", ja: "私たち７時に劇を見に行くんです", en: "We are going to see a play at seven." },
+        { id: 326, context: "【Scene04-05 オススメを聞く】このような聞き方ができると便利です。", ja: "一番早くできる料理はなんですか？", en: "What's the quickest meal?" },
+
+        // --- Scene04-06 友人と料理について語ってみよう ---
+        { id: 327, context: "【Scene04-06 料理の感想】ちょっと野菜が足りないなーと思ったら", ja: "サラダをシェアしよう", en: "Let's share the salad." },
+        { id: 328, context: "【Scene04-06 料理の感想】なんだかとっても量が多い気がするんですけど", ja: "これって一人前？", en: "Is this for one person?" },
+        { id: 329, context: "【Scene04-06 料理の感想】厚さ５センチの肉のかたまりを見て", ja: "ボリュームたっぷりだね", en: "It's really filling." },
+        { id: 330, context: "【Scene04-06 料理の感想】海外で食べる洋食ってたいてい", ja: "何にでもポテトの山がついてくるよね", en: "Everything comes with heaps of potatoes, doesn't it?" },
+        { id: 331, context: "【Scene04-06 料理の感想】手をのばしたり身を乗り出したりせず、近くの人に頼みましょう。", ja: "塩をとってもらえる？", en: "Could you pass me the salt?" },
+        { id: 332, context: "【Scene04-06 料理の感想】この店の名物料理サーモン・フィッシュケーキのお味は", ja: "すごくおいしい！", en: "It's so delicious!" },
+        { id: 333, context: "【Scene04-06 料理の感想】もう少し感想を語ってみます。", ja: "フィッシュケーキとこのソースがすごくよく合ってる", en: "Fish cakes and this sauce go very well together." },
+        { id: 334, context: "【Scene04-06 料理の感想】微妙な表情で食べている友人に聞いてみます。", ja: "あなたのはどう？", en: "How about yours?" },
+        { id: 335, context: "【Scene04-06 料理の感想】友人いわく、", ja: "これは脂っこくてもたれるよ", en: "This is greasy and heavy." },
+        { id: 336, context: "【Scene04-06 料理の感想】友人の口癖です。", ja: "僕もそれにすればよかった", en: "I should have ordered that, too." },
+        { id: 337, context: "【Scene04-06 料理の感想】「まずい」と言われると食べてみたくなるのが人情です。", ja: "一口ちょうだい？", en: "Can I have a bite?" },
+        { id: 338, context: "【Scene04-06 料理の感想】友人が「まずい」と言う料理を食べてみて一言", ja: "たしかに", en: "It sure is." },
+
+        // --- Scene04-07 友人とちょっとだけグチってみる ---
+        { id: 339, context: "【Scene04-07 食事のグチ】味や量の割に値段が高いと感じたときは、このように言います。", ja: "これでこの値段は高すぎる", en: "This is overpriced." },
+        { id: 340, context: "【Scene04-07 食事のグチ】旅行中の食事はつねに腹十二分目くらいです。", ja: "毎日こんな風に食べてたら太っちゃうよ", en: "If I eat like this everyday, I'll get fat." },
+        { id: 341, context: "【Scene04-07 食事のグチ】しょっぱい料理はのどが渇くので", ja: "薄味のほうが好きだな", en: "I prefer light seasoning." },
+        { id: 342, context: "【Scene04-07 食事のグチ】毎日お肉やパンばかり食べていると", ja: "ごはんとみそ汁が恋しいよ", en: "I miss rice and miso soup." },
+        { id: 343, context: "【Scene04-07 食事のグチ】あっさりした和食を食べたい、という友人に", ja: "郷に入っては郷に従え、だよ", en: "When in Rome, do as the Romans do." },
+        { id: 344, context: "【Scene04-07 食事のグチ】すごく量が多かったけど、もったいないし", ja: "全部食べたよ！", en: "I ate everything!" },
+        { id: 345, context: "【Scene04-07 食事のグチ】まだ半分以上残っているけど", ja: "もう食べられない", en: "I can't eat another bite." },
+        { id: 346, context: "【Scene04-07 食事のグチ】ステーキを半分以上残した友人に対して", ja: "もったいない！", en: "What a waste!" },
+        { id: 347, context: "【Scene04-07 食事のグチ】さっきからちょっと気になっていたんだけど", ja: "あのウェイター、すごく感じ悪い", en: "That waiter is very rude." },
+
+        // --- Scene04-08 食事中、店員さんとの会話 ---
+        { id: 348, context: "【Scene04-08 店員との会話】食事の途中でテーブル担当のウェイターが聞いてきます。", ja: "何かございませんか？", en: "Is everything OK?" },
+        { id: 349, context: "【Scene04-08 店員との会話】\"Is everything OK?\"と聞かれて、問題なければ", ja: "大丈夫です", en: "Fine, thank you." },
+        { id: 350, context: "【Scene04-08 店員との会話】料理の食べ方がわからないときは", ja: "これはどうやって食べるんですか？", en: "How should I eat this?" },
+        { id: 351, context: "【Scene04-08 店員との会話】シェフがテーブルまでやってきました。", ja: "いかがですか？", en: "How do you like it?" },
+        { id: 352, context: "【Scene04-08 店員との会話】お味はいかがですかと聞きに来たシェフに答えます。", ja: "こんなにおいしいものは食べたことがないです", en: "I've never had anything this good before." },
+        { id: 353, context: "【Scene04-08 店員との会話】さっき食べたパンがとても美味しかったので…", ja: "同じ物をもう一つ下さい", en: "I'd like another one, please." },
+        { id: 354, context: "【Scene04-08 店員との会話】ワインがとっても美味しいので", ja: "ワインのおかわりをください", en: "I'd like another glass of wine, please." },
+        { id: 355, context: "【Scene04-08 店員との会話】味の濃い料理を食べたらのどが渇いてしまいました。", ja: "お水を一杯いただけますか？", en: "Could I have a glass of water?" },
+        { id: 356, context: "【Scene04-08 店員との会話】追加注文したいときは", ja: "メニューを見せてもらえますか？", en: "May I see the menu?" },
+        { id: 357, context: "【Scene04-08 店員との会話】フォークを落としてしまったら、自分で拾おうとせずウェイターを呼びます。", ja: "すみません、フォークを落としてしまいました", en: "Sorry, I dropped my fork." },
+
+        // --- Scene04-09 食べ終わったらお会計 ---
+        { id: 358, context: "【Scene04-09 お会計】食後のコーヒーも飲んだし…", ja: "そろそろ行こうか？", en: "Why don't we go now?" },
+        { id: 359, context: "【Scene04-09 お会計】外国のレストランでは、こう言ってテーブルにウェイターを呼んで支払いを済ませます。", ja: "勘定をお願いします", en: "Check, please." },
+        { id: 360, context: "【Scene04-09 お会計】食べ残しを持ち帰るのはちょっと恥ずかしいけど、もったいないし…", ja: "これを包んでいただけますか？", en: "Could you wrap this for me?" },
+        { id: 361, context: "【Scene04-09 お会計】チップが必要かどうか知るために", ja: "サービス料は含まれていますか？", en: "Is a service charge included?" },
+        { id: 362, context: "【Scene04-09 お会計】友人はごちそうすると言ってくれてるけど、後がコワイし", ja: "ワリカンにしよう", en: "Let's split it." },
+        { id: 363, context: "【Scene04-09 お会計】合計金額がどう考えてもおかしい、と思ったら", ja: "伝票が間違っています", en: "There is a mistake on the check." },
+        { id: 364, context: "【Scene04-09 お会計】自分達が頼んだものと全くちがう料理の名前が並んでいたら", ja: "これは私たちの伝票ではありません", en: "This is not our check." },
+        { id: 365, context: "【Scene04-09 お会計】料理・サービスとも気に入ったら、レストランを出るときに", ja: "本当においしかったです", en: "I really enjoyed the meal." },
+
+        // --- Scene04-10 クレームを言う ---
+        { id: 366, context: "【Scene04-10 クレーム】どう見ても洗ってないだろコレ…と思われるグラスが置かれていたら", ja: "別のグラスをいただけますか？", en: "Could I have another glass?" },
+        { id: 367, context: "【Scene04-10 クレーム】お腹がすいているときに待たされるのは本当に苛立ちます。", ja: "注文した物をずっと待ってるんですけど", en: "I'm still waiting for my order." },
+        { id: 368, context: "【Scene04-10 クレーム】友人はもうほとんど食べ終わっているのに…", ja: "私の料理がまだ来ていません", en: "My food hasn't come yet." },
+        { id: 369, context: "【Scene04-10 クレーム】注文した時間を覚えていたら、具体的に", ja: "３０分前に注文したのですが", en: "I ordered thirty minutes ago." },
+        { id: 370, context: "【Scene04-10 クレーム】あまり待たされるようなら", ja: "注文を取り消してもいいですか？", en: "May I cancel my order?" },
+        { id: 371, context: "【Scene04-10 クレーム】飲み物の前に料理が来てしまったら", ja: "飲み物がまだ来ていません", en: "Our drinks haven't come yet." },
+        { id: 372, context: "【Scene04-10 クレーム】食後の紅茶くらい気分よく楽しみたいのに", ja: "この紅茶生ぬるいです", en: "This tea is lukewarm." },
+        { id: 373, context: "【Scene04-10 クレーム】全く注文した覚えのないものが出てきたら", ja: "これは注文していません", en: "I didn't order this." },
+        { id: 374, context: "【Scene04-10 クレーム】この種のアクシデントは人によって許容度がちがったりしますが", ja: "プディングに髪の毛が入ってます", en: "There's a hair in my pudding." },
+        { id: 375, context: "【Scene04-10 クレーム】ステーキはよく焼いてって言ったのに、ナイフを入れてみると…", ja: "火が通ってないです", en: "This isn't cooked enough." },
+        { id: 376, context: "【Scene04-10 クレーム】料理やサービスがあまりに酷かったら", ja: "これはひどすぎます", en: "This is awful." },
+
+        // --- Scene05-01 切符の購入＆払い戻し ---
+        { id: 377, context: "【Scene05-01 切符の購入】地下鉄に乗るためにトークンを購入します。", ja: "トークンはどこで買えますか？", en: "Where can I get a token?" },
+        { id: 378, context: "【Scene05-01 切符の購入】もっとていねいに聞きたいときは", ja: "トークンはどこで買えるのか教えていただけますか？", en: "Could you tell me where I can get a token?" },
+        { id: 379, context: "【Scene05-01 切符の購入】切符を購入します。", ja: "シアトルまでの切符を１枚ください", en: "A ticket to Seattle, please." },
+        { id: 380, context: "【Scene05-01 切符の購入】「チケット」とだけ言うとこのように聞かれたりします。", ja: "片道ですか、往復ですか？", en: "One way or round trip?" },
+        { id: 381, context: "【Scene05-01 切符の購入】値段もお得で便利な１日乗車券を利用してみましょう。", ja: "１日乗車券を２枚ください", en: "Two one-day tickets, please." },
+        { id: 382, context: "【Scene05-01 切符の購入】一度に具体的に言ってしまいたいときは", ja: "シアトルまでの往復切符を２枚ください", en: "Two round-trip tickets to Seattle, please." },
+        { id: 383, context: "【Scene05-01 切符の購入】料金を聞きたいときは", ja: "シカゴまでの料金はいくらですか？", en: "What's the fare for Chicago?" },
+        { id: 384, context: "【Scene05-01 切符の購入】うっかり違うボタンを押してしまいました。", ja: "間違った切符を買ってしまいました", en: "I bought the wrong ticket." },
+        { id: 385, context: "【Scene05-01 切符の購入】間違った切符を買ってしまったら", ja: "この切符は払い戻しできますか？", en: "Can I return this ticket?" },
+        { id: 386, context: "【Scene05-01 切符の購入】高額紙幣しか持っていないときは、念のため聞いておきましょう。", ja: "券売機からおつりは出ますか？", en: "Can I get change from the ticket machine?" },
+
+        // --- Scene05-02 鉄道を利用しよう ---
+        { id: 387, context: "【Scene05-02 鉄道】列車に乗る前に確認しておきましょう。", ja: "この列車はパディントンに止まりますか？", en: "Does this train stop at Paddington?" },
+        { id: 388, context: "【Scene05-02 鉄道】プラットフォームがわからないときは", ja: "バース行きのプラットフォームは何番ですか？", en: "Which number is the platform for Bath?" },
+        { id: 389, context: "【Scene05-02 鉄道】出発時刻を知りたいときは", ja: "列車は何時出発ですか？", en: "What time does the train leave?" },
+        { id: 390, context: "【Scene05-02 鉄道】到着時刻を知りたいときは", ja: "列車は何時にロンドンに着きますか？", en: "What time does the train arrive in London?" },
+        { id: 391, context: "【Scene05-02 鉄道】どれくらいの間隔で運行されているのか知りたいときは", ja: "マンチェスター行きの列車は何分間隔で走っていますか？", en: "How often does the train for Manchester run?" },
+        { id: 392, context: "【Scene05-02 鉄道】出発時間を過ぎているのに列車がホームに来ていない、なんてときは", ja: "列車は遅れているのですか？", en: "Is the train late?" },
+        { id: 393, context: "【Scene05-02 鉄道】どれだけ遅れているのか聞きたいときは", ja: "列車はどれくらい遅れているのですか？", en: "How late is the train?" },
+        { id: 394, context: "【Scene05-02 鉄道】列車は駅と駅の間隔が広いので、間違えるとけっこう大変です。", ja: "間違った列車に乗ってしまいました", en: "I'm on the wrong train." },
+        { id: 395, context: "【Scene05-02 鉄道】列車は駅と駅の間隔が広いので、乗り過ごすとけっこう大変です。", ja: "駅を乗り過ごしてしまいました", en: "I've passed my station." },
+        { id: 396, context: "【Scene05-02 鉄道】車掌さんが切符をチェックしに来たけれど、切符が見当たらない！", ja: "切符をなくしてしまいました", en: "I lost my ticket." },
+        { id: 397, context: "【Scene05-02 鉄道】なにかトラブったときは、対処法を聞きましょう。", ja: "どうすればいいですか？", en: "What should I do?" },
+
+        // --- Scene05-03 地下鉄を利用しよう ---
+        { id: 398, context: "【Scene05-03 地下鉄】たいてい地下鉄マークが出ているのでわかりやすいのですが", ja: "地下鉄の入り口はどこですか？", en: "Where is the entrance to the subway?" },
+        { id: 399, context: "【Scene05-03 地下鉄】国や地方によって違うこともありますが", ja: "エスカレーターでは右側に立たなきゃだめだよ", en: "We should stand on the right side of the escalator." },
+        { id: 400, context: "【Scene05-03 地下鉄】不安なときは聞いておきましょう。", ja: "グリーンパークはいくつめですか？", en: "How many stops is it to Green Park?" },
+        { id: 401, context: "【Scene05-03 地下鉄】目的地を伝えた上で", ja: "乗り換える必要はありますか？", en: "Do I need to transfer?" },
+        { id: 402, context: "【Scene05-03 地下鉄】出口を間違えるとたくさん歩くはめになったりするので", ja: "ハロッズへはどの出口ですか？", en: "Which is the exit for Harrods?" },
+        { id: 403, context: "【Scene05-03 地下鉄】地下鉄路線図が手元にないときは", ja: "アーセナルへはどの路線に乗ればいいですか？", en: "Which line should I take to go to Arsenal?" },
+        { id: 404, context: "【Scene05-03 地下鉄】聞き取れるとうれしい地下鉄アナウンス その１", ja: "（電車とホームの）すき間にご注意ください", en: "Please mind the gap." },
+        { id: 405, context: "【Scene05-03 地下鉄】聞き取れるとうれしい地下鉄アナウンス その２", ja: "閉まるドアから離れてください", en: "Please stand clear of the closing door." },
+
+        // --- Scene05-04 バスを利用しよう ---
+        { id: 406, context: "【Scene05-04 バス】バスの番号をチェックすれば確実です。", ja: "ウォール街へ行くのは何番のバスですか？", en: "Which number buses go to Wall Street?" },
+        { id: 407, context: "【Scene05-04 バス】バスに乗り込んだら、ドライバーに確認しておきましょう。", ja: "このバスはロックフェラーセンターへ行きますか？", en: "Does this bus go to Rockefeller Center?" },
+        { id: 408, context: "【Scene05-04 バス】目的地をドライバーに告げたら、こう言われてしまうこともあります。", ja: "このバスは反対方向を行ってるんですよ", en: "This bus is going in the opposite direction." },
+        { id: 409, context: "【Scene05-04 バス】先払いのときと後払いのときがあります。", ja: "運賃はいつ払うんですか？", en: "When do I pay the fare?" },
+        { id: 410, context: "【Scene05-04 バス】バスに乗り込んだら、まず行き先を告げます。", ja: "セントラルパークへ行きたいのですが", en: "I'd like to go to Central Park." },
+        { id: 411, context: "【Scene05-04 バス】ドライバーの近くに乗り、降りるバス停で声をかけてもらうと良いでしょう。", ja: "降りるところで教えていただけますか？", en: "Could you tell me when to get off?" },
+        { id: 412, context: "【Scene05-04 バス】ドライバーの近くに乗り、目的地についたら声をかけてもらうようお願いしましょう。", ja: "セントラルパークが近くに来たら教えていただけますか？", en: "Could you tell me when Central Park is near?" },
+        { id: 413, context: "【Scene05-04 バス】降りる直前にもう一度確認したいときは その１", ja: "ここが私の降りるバス停ですか？", en: "Is this my stop?" },
+        { id: 414, context: "【Scene05-04 バス】降りる直前にもう一度確認したいときは その２", ja: "タイムズスクエアへ行くのにこのバス停で合ってますか？", en: "Is this the right stop to go to Times Square?" },
+        { id: 415, context: "【Scene05-04 バス】どのバス停で降りればいいのかわからないときは", ja: "ソーホーへ行くにはどこでバスを降りればいいですか？", en: "Where should I get off the bus to go to SoHo?" },
+        { id: 416, context: "【Scene05-04 バス】降りるときは、無言で人を押しのけたりしないように。", ja: "ちょっと通してください", en: "Coming through, please." },
+        { id: 417, context: "【Scene05-04 バス】バスが込んでいてなかなか前へ進めないときは、声を張り上げて", ja: "すみません、降りまーす！", en: "Excuse me, I'm getting off!" },
+
+        // --- Scene05-05 レンタカーを借りるには？ ---
+        { id: 418, context: "【Scene05-05 レンタカー】レンタカーを借りよう その１", ja: "車を２日借りたいのですが", en: "I'd like to rent a car for two days." },
+        { id: 419, context: "【Scene05-05 レンタカー】レンタカーを借りよう その２", ja: "オートマチックの小型車をお願いします", en: "I'd like an automatic compact car." },
+        { id: 420, context: "【Scene05-05 レンタカー】レンタカーの料金を聞く その１", ja: "１日あたりの料金はいくらですか？", en: "What's the rate per day?" },
+        { id: 421, context: "【Scene05-05 レンタカー】レンタカーの料金を聞く その２", ja: "料金表を見せていただけますか？", en: "Could you show me the rate list?" },
+        { id: 422, context: "【Scene05-05 レンタカー】レンタカーの料金を聞く その３", ja: "走行距離は無制限ですか？", en: "Is the mileage free?" },
+        { id: 423, context: "【Scene05-05 レンタカー】レンタカーの料金を聞く その４", ja: "これは保険を含んでいますか？", en: "Does this include insurance?" },
+        { id: 424, context: "【Scene05-05 レンタカー】とりあえず車をみせてもらいましょう。", ja: "車を見せてもらえますか？", en: "May I see the car?" },
+        { id: 425, context: "【Scene05-05 レンタカー】借りる前に車を見て、故障やキズなどをしっかりチェックしておきましょう。", ja: "契約書にサインする前に車をチェックできますか？", en: "Can I check the car before I sign the contract?" },
+        { id: 426, context: "【Scene05-05 レンタカー】目的地で乗り捨てたいときは", ja: "サンフランシスコで車を返すことはできますか？", en: "Can I return the car in San Francisco?" },
+        { id: 427, context: "【Scene05-05 レンタカー】返すときの決まりを聞いておきます。", ja: "返す前に車を満タンにする必要がありますか？", en: "Do I need to fill up the car before I return it?" },
+        { id: 428, context: "【Scene05-05 レンタカー】保険は万が一に備えてかならず入っておきましょう。", ja: "保険をかけたいのですが", en: "I'd like to buy insurance." },
+        { id: 429, context: "【Scene05-05 レンタカー】国際免許証に加えて日本の免許証が必要なときもあるようです。", ja: "これが免許証です", en: "Here's my driver's license." },
+
+        // --- Scene05-06 レンタカーでドライブ！ ---
+        { id: 430, context: "【Scene05-06 ドライブ】慣れない国だと勝手がちがって大変です。", ja: "高速に乗るにはどうしたらいいの？", en: "How do I get onto the freeway?" },
+        { id: 431, context: "【Scene05-06 ドライブ】スピード違反に注意しましょう。", ja: "このへんの制限速度はどれくらいですか？", en: "What's the speed limit here?" },
+        { id: 432, context: "【Scene05-06 ドライブ】なんだか顔色の悪い友人に「どうしたの？」と聞くと", ja: "ガソリンが切れそう", en: "We're running out of gas." },
+        { id: 433, context: "【Scene05-06 ドライブ】とりあえずガソリンスタンドを探します。", ja: "一番近いガソリンスタンドはどこですか？", en: "Where is the nearest gas station?" },
+        { id: 434, context: "【Scene05-06 ドライブ】もっとていねいに聞きたいなら", ja: "ここから一番近いガソリンスタンドをご存知ですか？", en: "Do you know the nearest gas station from here?" },
+        { id: 435, context: "【Scene05-06 ドライブ】近いと言っても、見える範囲内にはないんですけど", ja: "ここからどのくらいの距離ですか？", en: "How far is it from here?" },
+        { id: 436, context: "【Scene05-06 ドライブ】ガソリンスタンドのお兄さんに", ja: "満タンにしてください", en: "Fill it up, please." },
+        { id: 437, context: "【Scene05-06 ドライブ】フロントガラスが砂ぼこりだらけなので", ja: "フロントガラスを拭いていただけますか？", en: "Could you clean the windshield?" },
+        { id: 438, context: "【Scene05-06 ドライブ】海外のガソリンスタンドはほとんどがセルフサービス。", ja: "ガソリンの入れ方を教えていただけますか？", en: "Could you show me how to fill the gas?" },
+        { id: 439, context: "【Scene05-06 ドライブ】レンタカーを返却します。", ja: "事故はありませんでした", en: "I didn't have any accidents." },
+        { id: 440, context: "【Scene05-06 ドライブ】車体に大きなキズがついていますが", ja: "この傷は私がつけたのではありません", en: "I didn't make this scratch." },
+
+        // --- Scene05-07 レンタカーでトラブル！ ---
+        { id: 441, context: "【Scene05-07 車のトラブル】車のトラブル その１", ja: "パンクしてしまいました", en: "I've got a flat tire." },
+        { id: 442, context: "【Scene05-07 車のトラブル】パンクしてしまったので", ja: "スペアタイヤをつけたいのです", en: "I'd like to put the spare tire on." },
+        { id: 443, context: "【Scene05-07 車のトラブル】かなり力のいる作業なので、通りすがりの人に頼んでみます。", ja: "手を貸していただけませんか？", en: "Could you give me a hand?" },
+        { id: 444, context: "【Scene05-07 車のトラブル】車に問題が起きてレンタカー会社に連絡するときは、こう切り出します", ja: "そちらで借りた車に問題が起きました", en: "The car I rented from you has a problem." },
+        { id: 445, context: "【Scene05-07 車のトラブル】車のトラブル その２", ja: "バッテリーがあがったみたい", en: "The battery is dead." },
+        { id: 446, context: "【Scene05-07 車のトラブル】車のトラブル その３", ja: "エンジンの調子がおかしいんです", en: "Something is wrong with the engine." },
+        { id: 447, context: "【Scene05-07 車のトラブル】車のトラブル その４", ja: "ブレーキが壊れてます", en: "The brakes don't work." },
+        { id: 448, context: "【Scene05-07 車のトラブル】車のトラブル その５", ja: "車が壊れてしまいました", en: "The car has broken down." },
+        { id: 449, context: "【Scene05-07 車のトラブル】どうにもこうにもまったく動かないので", ja: "レッカー車をお願いします", en: "Could you send a tow truck?" },
+        { id: 450, context: "【Scene05-07 車のトラブル】事故を起こしてしまったら、必ず", ja: "警察を呼んでください", en: "Please call the police." },
+        { id: 451, context: "【Scene05-07 車のトラブル】自分に過失がないのなら、キッパリと", ja: "私のせいではありません", en: "It's not my fault." },
+        { id: 452, context: "【Scene05-07 車のトラブル】事実関係を説明します。", ja: "彼がぶつかってきたんです", en: "His car bumped into my car." },
+
+        // --- Scene06-01 店員とのコミュニケーション・フレーズ集 ---
+        { id: 453, context: "【Scene06-01 店員との会話】お店に入ると、店員さんが声をかけてきます。", ja: "何かお探しですか？", en: "May I help you?" },
+        { id: 454, context: "【Scene06-01 店員との会話】すこし失礼かもしれませんが", ja: "見ているだけなんです、ありがとう", en: "I'm just looking, thanks." },
+        { id: 455, context: "【Scene06-01 店員との会話】とりあえず当分放っておいてほしいとき その１", ja: "あとでお願いします", en: "Maybe later, thanks." },
+        { id: 456, context: "【Scene06-01 店員との会話】とりあえず当分放っておいてほしいとき その２", ja: "まずは見てまわりたいです", en: "I'd like to look around first." },
+        { id: 457, context: "【Scene06-01 店員との会話】商品を前にして決断に踏み切れないとき その１", ja: "ちょっと考えます", en: "I'll think about it." },
+        { id: 458, context: "【Scene06-01 店員との会話】商品を前にして決断に踏み切れないとき その２", ja: "よく考えさせてください", en: "Let me think it over." },
+        { id: 459, context: "【Scene06-01 店員との会話】商品を前にして決断に踏み切れないとき その３", ja: "まだ決められません", en: "I can't make up my mind yet." },
+        { id: 460, context: "【Scene06-01 店員との会話】店員さんにすすめてもらった物がイマイチだったとき その１", ja: "他のをさがしてみます、ありがとう", en: "I'll look for something else, thank you." },
+        { id: 461, context: "【Scene06-01 店員との会話】店員さんにすすめてもらった物がイマイチだったとき その２", ja: "今回はやめておきます、ありがとう", en: "I'll pass this time, thank you." },
+        { id: 462, context: "【Scene06-01 店員との会話】買いたいのにお金が足りないときは", ja: "今持ち合わせがありません", en: "I don't have enough money with me now." },
+        { id: 463, context: "【Scene06-01 店員との会話】お金が足りないけどどうしても欲しいときは", ja: "このジャケットを取っておいていただけますか？", en: "Could you hold this jacket for me?" },
+        { id: 464, context: "【Scene06-01 店員との会話】トイレに行きたいのに見当たらないときは", ja: "この辺りにお手洗いはありますか？", en: "Is there a rest room around here?" },
+
+        // --- Scene06-02 店員さんに希望を伝えよう ---
+        { id: 465, context: "【Scene06-02 希望を伝える】手の届かない場所に飾ってあるアイテムを見せてもらいたいときは、指をさしつつ", ja: "あれを見せてもらえますか？", en: "Could you show me that one?" },
+        { id: 466, context: "【Scene06-02 希望を伝える】ストリートを歩いていたら、店先のジャケットに一目惚れ。", ja: "ショーウィンドウにあるジャケットを見せていただけますか？", en: "Could you show me the jacket in the window?" },
+        { id: 467, context: "【Scene06-02 希望を伝える】デザインが気に入ったら、色違いはないか聞いてみましょう。", ja: "これの色違いはありますか？", en: "Do you have this in other colors?" },
+        { id: 468, context: "【Scene06-02 希望を伝える】体のラインに沿っていて、コンパクトで動きやすいような…", ja: "ぴったりしたジャケットがほしいんですけど", en: "I'd like a fitted jacket." },
+        { id: 469, context: "【Scene06-02 希望を伝える】これもすごくステキだけれど、念のため。", ja: "他のも見てみたいです", en: "I'd like to see some others." },
+        { id: 470, context: "【Scene06-02 希望を伝える】ぶかぶかな感じがかわいらしい", ja: "ゆったりしたセーターを探しているんです", en: "I'm looking for a loose sweater." },
+        { id: 471, context: "【Scene06-02 希望を伝える】要望をさらに細かく伝えよう その１", ja: "ジーンズに合うような…", en: "Something that looks nice with jeans." },
+        { id: 472, context: "【Scene06-02 希望を伝える】要望をさらに細かく伝えよう その２", ja: "カジュアル過ぎず、かといってフォーマル過ぎない物", en: "Something not too casual but not too formal." },
+        { id: 473, context: "【Scene06-02 希望を伝える】あらかじめ予算を伝えておくと話が早いかもしれません。", ja: "６０ドルくらいのバッグを探しているのですが", en: "I'm looking for a bag for around sixty dollars." },
+        { id: 474, context: "【Scene06-02 希望を伝える】スニーカーでは入れないレストランへ行きたいときは", ja: "上品な感じの靴を探しているのですが", en: "I'm looking for some smart shoes." },
+        { id: 475, context: "【Scene06-02 希望を伝える】ちょっと手の届かない高価な商品をすすめられたら", ja: "もう少しお手ごろなのはありますか？", en: "Do you have anything more reasonable?" },
+
+        // --- Scene06-03 試着してみよう ---
+        { id: 476, context: "【Scene06-03 試着】洋服はできるだけ試着してから買いましょう。", ja: "これを試着してもいいですか？", en: "May I try this on?" },
+        { id: 477, context: "【Scene06-03 試着】試着室に入っているあいだ、荷物をお願いしたいときは", ja: "私の荷物を見ていていただけますか？", en: "Could you keep an eye on my baggage?" },
+        { id: 478, context: "【Scene06-03 試着】\"How is it?（どうですか？）\"と聞かれたら", ja: "とても気に入りました", en: "I like it very much." },
+        { id: 479, context: "【Scene06-03 試着】試着した洋服がサイズぴったり！そんなときは", ja: "ぴったりです", en: "This is just my size." },
+        { id: 480, context: "【Scene06-03 試着】着てみたら似合わなかった、というときもあります。", ja: "あまり似合わないみたいです", en: "I don't think this suits me very well." },
+        { id: 481, context: "【Scene06-03 試着】滞在中に太ってしまったのか", ja: "ウエストのあたりがちょっとキツイです", en: "It's a little tight around the waist." },
+        { id: 482, context: "【Scene06-03 試着】つきそいの友人を呼んで聞いてみます。", ja: "どう思う？", en: "What do you think?" },
+        { id: 483, context: "【Scene06-03 試着】友人に試着の感想を求められたら その１", ja: "カッコイイ！", en: "You look cool!" },
+        { id: 484, context: "【Scene06-03 試着】友人に試着の感想を求められたら その２", ja: "とても良く似合ってると思うよ", en: "I think that suits you very well." },
+        { id: 485, context: "【Scene06-03 試着】友人に試着の感想を求められたら その３", ja: "ちょっと派手すぎるんじゃない？", en: "Isn't that a little too flashy?" },
+
+        // --- Scene06-04 サイズが大きすぎたら、お直しを ---
+        { id: 486, context: "【Scene06-04 サイズ・お直し】店員さんは「お似合いですよ」と言うけれど、どう見ても…", ja: "これは私には大きすぎます", en: "This is too large for me." },
+        { id: 487, context: "【Scene06-04 サイズ・お直し】気に入った服のサイズが大きすぎるときは", ja: "もっと小さいのはありますか？", en: "Do you have anything smaller?" },
+        { id: 488, context: "【Scene06-04 サイズ・お直し】自分のサイズがわからないときは、測ってもらいましょう。", ja: "サイズを測っていただけますか？", en: "Could you measure my size?" },
+        { id: 489, context: "【Scene06-04 サイズ・お直し】気に入った服のサイズが合わないときも、すぐにあきらめることはありません。", ja: "お直しできますか？", en: "Do you do alterations?" },
+        { id: 490, context: "【Scene06-04 サイズ・お直し】お直し依頼 丈が長すぎるとき", ja: "丈を直していただけますか？", en: "Could you adjust the length?" },
+        { id: 491, context: "【Scene06-04 サイズ・お直し】お直し依頼 袖やすそを指差しながら", ja: "この部分を短くしてください", en: "Please make this part shorter." },
+        { id: 492, context: "【Scene06-04 サイズ・お直し】お直し依頼 ウエストがゆるすぎるとき", ja: "ウエストをつめてください", en: "Please take in the waist." },
+        { id: 493, context: "【Scene06-04 サイズ・お直し】お直しにかかる値段を聞いてみます。", ja: "それにはいくらかかりますか？", en: "How much do you charge for it?" },
+        { id: 494, context: "【Scene06-04 サイズ・お直し】できればその日のうちに持って帰りたいものです。", ja: "すぐに直していただけますか？", en: "Could you adjust it right now?" },
+        { id: 495, context: "【Scene06-04 サイズ・お直し】いつ仕上がるのか聞いてみよう その１", ja: "どれくらいかかりますか？", en: "How long will it take?" },
+        { id: 496, context: "【Scene06-04 サイズ・お直し】いつ仕上がるのか聞いてみよう その２", ja: "いつ取りに来たらいいですか？", en: "When can I pick it up?" },
+        { id: 497, context: "【Scene06-04 サイズ・お直し】帰国まで日数が限られているときは、受け取り希望日を伝えます。", ja: "今週末までに欲しいのですが", en: "I'd like to have it by the end of this week." },
+
+        // --- Scene06-05 おみやげを買おう ---
+        { id: 498, context: "【Scene06-05 おみやげ】免税店の場所を聞いてみましょう。", ja: "免税店がどこにあるかご存知ですか？", en: "Do you know where the duty-free shop is?" },
+        { id: 499, context: "【Scene06-05 おみやげ】免税店では忘れずに書類をもらいましょう。", ja: "免税の手続き書類をいただけますか？", en: "May I have a tax refund form?" },
+        { id: 500, context: "【Scene06-05 おみやげ】アンティークのお店があればのぞいてみたいなあ、と思ったら", ja: "この辺にアンティークのお店はありますか？", en: "Are there any antique shops around here?" },
+        { id: 501, context: "【Scene06-05 おみやげ】窓もドアもしめ切った、うす暗いお店発見。", ja: "このお店あやしい", en: "This shop looks seedy." },
+        { id: 502, context: "【Scene06-05 おみやげ】開店しているのかよくわからないときは、お店の人に聞いてみましょう。", ja: "今開いてますか？", en: "Are you open now?" },
+        { id: 503, context: "【Scene06-05 おみやげ】この土地ならではのおみやげはないか聞いてみましょう。", ja: "この町のおみやげにはどんなのがありますか？", en: "What kind of souvenirs are there in this town?" },
+        { id: 504, context: "【Scene06-05 おみやげ】おみやげに迷ったら、こんな風に聞いてみるのもいいでしょう。", ja: "どのおみやげが一番人気ですか？", en: "Which souvenirs are most popular?" },
+        { id: 505, context: "【Scene06-05 おみやげ】アメリカみやげに\"Made in China（中国製）\"なんて書かれていたらせつないので", ja: "アメリカ製の物が欲しいのですが", en: "I'd like something made in America." },
+
+        // --- Scene06-06 Pottery（陶器）を買ってみよう ---
+        { id: 506, context: "【Scene06-06 陶器を買う】きちんと並べられている陶器の数々を", ja: "手に取ってもいいですか？", en: "Can I pick it up?" },
+        { id: 507, context: "【Scene06-06 陶器を買う】材質が何かわからないときは", ja: "これは何でできてるんですか？", en: "What is this made of?" },
+        { id: 508, context: "【Scene06-06 陶器を買う】ここでしか手に入らない限定柄発見！", ja: "このカップ＆ソーサーはいいおみやげになるわ", en: "This cup and saucer make a good souvenir." },
+        { id: 509, context: "【Scene06-06 陶器を買う】思わず壷なんて買ってしまったけど", ja: "かさばりそうだね", en: "It seems to take up so much space." },
+        { id: 510, context: "【Scene06-06 陶器を買う】スーツケースに入りきらないほどお買い物してしまったので", ja: "日本に送っていただけますか？", en: "Could you send it to Japan?" },
+        { id: 511, context: "【Scene06-06 陶器を買う】送料を聞いてみます。", ja: "送料はいくらですか？", en: "How much is the shipping?" },
+        { id: 512, context: "【Scene06-06 陶器を買う】せっかく安く買い物できたのに", ja: "送料が中身よりだいぶ高いですね", en: "The shipping cost is far more expensive than the contents." },
+        { id: 513, context: "【Scene06-06 陶器を買う】お店の人いわく", ja: "割れ物なので送料が高いんです", en: "The shipping is expensive because it's fragile." },
+        { id: 514, context: "【Scene06-06 陶器を買う】高い送料を払うくらいなら", ja: "自分で持って帰ります", en: "I'll bring it home with me." },
+        { id: 515, context: "【Scene06-06 陶器を買う】気がつくとすっかり日が落ちていました。", ja: "何時に閉店しますか？", en: "What time do you close?" },
+        { id: 516, context: "【Scene06-06 陶器を買う】閉店時間をとっくにすぎていることを知って", ja: "ここを長く開けてくれてありがとう", en: "Thank you for staying open longer." },
+
+        // --- Scene06-07 値引きに挑戦！ ---
+        { id: 517, context: "【Scene06-07 値引き】びっくりするような値段をふっかけられたら", ja: "高すぎます！", en: "It's too expensive!" },
+        { id: 518, context: "【Scene06-07 値引き】ダメもとで値引きに挑戦してみましょう。", ja: "値引きしていただけませんか？", en: "Could you give me a discount?" },
+        { id: 519, context: "【Scene06-07 値引き】バーゲン品を値引きしようとすると、こう言われてしまうかも。", ja: "値引きをしてこの値段です", en: "This is a discount price." },
+        { id: 520, context: "【Scene06-07 値引き】あまりしつこくすすめられてしまったら", ja: "値引きしていただけるなら買いますよ", en: "I'll take it if you can give me a discount." },
+        { id: 521, context: "【Scene06-07 値引き】はじめに予算を宣言してしまうのもいいかも知れません。", ja: "予算は５０ドルまでなんです", en: "My budget is up to fifty dollars." },
+        { id: 522, context: "【Scene06-07 値引き】値引きフレーズの切り札です。", ja: "今４０ドルしか持っていないんです", en: "I only have forty dollars now." },
+        { id: 523, context: "【Scene06-07 値引き】こういう取引をもちかけるのも有効です。", ja: "２つで６０ドルではどうですか？", en: "How about sixty dollars for two?" },
+        { id: 524, context: "【Scene06-07 値引き】相手がこう言ってくれれば値引き交渉成功です。", ja: "オーケー、６０ドルにしましょう", en: "OK, I'll make it sixty dollars." },
+        { id: 525, context: "【Scene06-07 値引き】納得のいく価格に落ち着いたら", ja: "交渉成立のようですね", en: "I think we have a deal." },
+        { id: 526, context: "【Scene06-07 値引き】税率が高い国もあるので要注意。", ja: "税込みですか？", en: "Is tax included?" },
+        { id: 527, context: "【Scene06-07 値引き】レジに持っていく前に確認してみましょう。", ja: "全部でいくらですか？", en: "How much is it altogether?" },
+
+        // --- Scene06-08 買うものが決まったらお会計 ---
+        { id: 528, context: "【Scene06-08 お会計】買うものが決まったら…", ja: "これ下さい", en: "I'll take this." },
+        { id: 529, context: "【Scene06-08 お会計】支払方法はこのように聞かれます。", ja: "現金ですか、カードですか？", en: "Cash or charge?" },
+        { id: 530, context: "【Scene06-08 お会計】日本円が使える国もあるのです。", ja: "日本円は使えますか？", en: "Do you take Japanese yen?" },
+        { id: 531, context: "【Scene06-08 お会計】国によっては、使えるカードがかなり制限されるので注意しましょう。", ja: "ビザカードは使えますか？", en: "Do you take Visa?" },
+        { id: 532, context: "【Scene06-08 お会計】お高い買い物をしてしまったら", ja: "分割払いはできますか？", en: "Can I pay in installments?" },
+        { id: 533, context: "【Scene06-08 お会計】もらったおつりが少なかったら", ja: "おつりが間違っているようです", en: "I think you gave me the wrong change." },
+        { id: 534, context: "【Scene06-08 お会計】冷静に、かつ威厳を持って説明しましょう。", ja: "５０ドル札を２枚渡しましたよ", en: "I gave you two 50 dollar bills." },
+        { id: 535, context: "【Scene06-08 お会計】もらったおつりが多かったら、やっぱり良心が痛むので", ja: "多すぎるようですが", en: "I think it's too much." },
+        { id: 536, context: "【Scene06-08 お会計】クレジットカードの請求額には目を光らせておきましょう。", ja: "値札と金額が違います", en: "This isn't the same amount as the price tag." },
+
+        // --- Scene06-09 プレゼント用の品物は… ---
+        { id: 537, context: "【Scene06-09 プレゼント包装】友人にプレゼントを買おう その１", ja: "プレゼント用に包んでもらえますか？", en: "Could you gift-wrap this?" },
+        { id: 538, context: "【Scene06-09 プレゼント包装】友人にプレゼントを買おう その２", ja: "中にこのカードを入れたいのですが", en: "Could you put this card inside?" },
+        { id: 539, context: "【Scene06-09 プレゼント包装】友人にプレゼントを買おう その３", ja: "値札を外していただけますか？", en: "Could you take off the price tag?" },
+        { id: 540, context: "【Scene06-09 プレゼント包装】友人達へのおみやげを、自分で個別にラッピングするなら", ja: "一緒に包んでください", en: "Please wrap them together." },
+        { id: 541, context: "【Scene06-09 プレゼント包装】友人達へのおみやげを、そのまま渡すだけにしたいなら その１", ja: "別々に包んでいただけますか？", en: "Could you wrap them separately?" },
+        { id: 542, context: "【Scene06-09 プレゼント包装】友人達へのおみやげを、そのまま渡すだけにしたいなら その２", ja: "別々の袋に入れていただけますか？", en: "Could you put them in separate bags?" },
+        { id: 543, context: "【Scene06-09 プレゼント包装】友人達へのおみやげを、ひとまとめに包装されてしまったら", ja: "小さい袋を品物の個数分いただけますか？", en: "Could you give me one small bag for each item?" },
+
+        // --- Scene06-10 クレーム・交換・返品する ---
+        { id: 544, context: "【Scene06-10 返品・クレーム】まずはこのように切り出してみましょう。", ja: "これ昨日買ったんですけど", en: "I bought this yesterday." },
+        { id: 545, context: "【Scene06-10 返品・クレーム】証拠となるレシートがないと、返品はむずかしいです。", ja: "これがレシートです", en: "Here's my receipt." },
+        { id: 546, context: "【Scene06-10 返品・クレーム】商品に欠陥があって、新しい物と交換してもらいたいときは", ja: "これを交換していただけませんか？", en: "Could you exchange this?" },
+        { id: 547, context: "【Scene06-10 返品・クレーム】商品に欠陥があって、もういらない気分になってしまったら", ja: "これを返品したいのですが", en: "I'd like to return this." },
+        { id: 548, context: "【Scene06-10 返品・クレーム】ちょっとだけ使ってしまったけど、欠陥品だったので", ja: "全額返金してもらえますか？", en: "Could I get a full refund for this?" },
+        { id: 549, context: "【Scene06-10 返品・クレーム】欠陥を説明する 洋服編", ja: "ここにシミを見つけたんです", en: "I found a stain here." },
+        { id: 550, context: "【Scene06-10 返品・クレーム】欠陥を説明する おもちゃ・雑貨etc編", ja: "壊れていました", en: "It was broken." },
+        { id: 551, context: "【Scene06-10 返品・クレーム】欠陥を説明する 電化製品編", ja: "動きません", en: "It doesn't work." },
+        { id: 552, context: "【Scene06-10 返品・クレーム】担当者の対応が悪いようなら、ビシっと一言。", ja: "マネージャーと話したいのですが", en: "I'd like to speak to the manager." },
+
+        // --- Scene07-01 ミュージカルを観よう！（前編） ---
+        { id: 553, context: "【Scene07-01 ミュージカル前編】まずは情報を集めよう その１", ja: "『オペラ座の怪人』はどこでやっていますか？", en: "Where is \"Phantom of the Opera\" playing?" },
+        { id: 554, context: "【Scene07-01 ミュージカル前編】まずは情報を集めよう その２", ja: "『マンマ・ミーア』はいつやっていますか？", en: "When is \"Mamma Mia\" playing?" },
+        { id: 555, context: "【Scene07-01 ミュージカル前編】まずは情報を集めよう その３", ja: "それはいつまでやっていますか？", en: "How long will it run?" },
+        { id: 556, context: "【Scene07-01 ミュージカル前編】まずは情報を集めよう その４", ja: "上映時間はどれくらいですか？", en: "How long is the performance?" },
+        { id: 557, context: "【Scene07-01 ミュージカル前編】まずは情報を集めよう その５", ja: "今日の演目はなんですか？", en: "What is today's program?" },
+        { id: 558, context: "【Scene07-01 ミュージカル前編】どのミュージカルを観るべきか迷ってしまったら", ja: "どのミュージカルが一番人気ですか？", en: "Which musical is the most popular?" },
+        { id: 559, context: "【Scene07-01 ミュージカル前編】ミュージカルにくわしい人なら、こんな質問も。", ja: "出演者はだれですか？", en: "Who's in it?" },
+        { id: 560, context: "【Scene07-01 ミュージカル前編】当日で手に入るかわからないけど", ja: "今夜のチケットはありますか？", en: "Do you have tickets available for tonight?" },
+
+        // --- Scene07-02 ミュージカルを観よう！（後編） ---
+        { id: 561, context: "【Scene07-02 ミュージカル後編】座席の場所より価格にこだわるなら", ja: "一番安い席はいくらですか？", en: "How much is the cheapest seat?" },
+        { id: 562, context: "【Scene07-02 ミュージカル後編】ミュージカルを観るなら絶対正面がいい！という人は", ja: "ステージの正面の席がいいです", en: "I'd like seats in front of the stage." },
+        { id: 563, context: "【Scene07-02 ミュージカル後編】いちばん前の席をとりたい！という人は", ja: "最前列の席はありますか？", en: "Do you have any seats in the front row?" },
+        { id: 564, context: "【Scene07-02 ミュージカル後編】１階席の後ろの方に座るくらいなら…", ja: "２階席はまだ空いてますか？", en: "Are balcony seats still available?" },
+        { id: 565, context: "【Scene07-02 ミュージカル後編】座席表を見ながら話すのが、いちばん簡単で確実です。", ja: "座席表を見せていただけますか？", en: "Could you show me the seating chart?" },
+        { id: 566, context: "【Scene07-02 ミュージカル後編】座席表を指さして", ja: "ここの席を２枚ください", en: "Two seats here, please." },
+        { id: 567, context: "【Scene07-02 ミュージカル後編】帰りの足は、しっかり確認しておきましょう。", ja: "地下鉄は劇の終わった後も走っていますか？", en: "Are the subways still running after the play?" },
+        { id: 568, context: "【Scene07-02 ミュージカル後編】座席が真ん中の方だったら、一声かけながら席につきましょう。", ja: "通していただけますか？", en: "Could you let me through?" },
+        { id: 569, context: "【Scene07-02 ミュージカル後編】海外のミュージカルって…", ja: "何て言ってるのかわかんないけど、楽しい！", en: "I can't understand what they say but I still enjoy it!" },
+        { id: 570, context: "【Scene07-02 ミュージカル後編】主役の女の子がばっちり役にハマっていたら", ja: "彼女はあの役にぴったりだね", en: "She is perfect for that part." },
+        { id: 571, context: "【Scene07-02 ミュージカル後編】開演に遅れてしまったときは、係員に聞いてみましょう。", ja: "今入ってもいいですか？", en: "May I get in now?" },
+
+        // --- Scene07-03 ジャズ・ディナーショーを楽しもう！ ---
+        { id: 572, context: "【Scene07-03 ジャズディナー】ジャズを聴きながらディナーできるレストランを探してみましょう。", ja: "ジャズを楽しめるレストランはありますか？", en: "Are there any restaurants where we can enjoy jazz?" },
+        { id: 573, context: "【Scene07-03 ジャズディナー】念のためレストランに問い合わせてみましょう。", ja: "今夜は生演奏がありますか？", en: "Do you have a live performance tonight?" },
+        { id: 574, context: "【Scene07-03 ジャズディナー】ジャズにくわしい人なら、こんな質問も。", ja: "今夜は誰が演奏するんですか？", en: "Who's playing tonight?" },
+        { id: 575, context: "【Scene07-03 ジャズディナー】演奏の時間はしっかりチェックしておきましょう。", ja: "演奏は何時から始まりますか？", en: "What time will they start playing?" },
+        { id: 576, context: "【Scene07-03 ジャズディナー】空いているのか微妙な席に座りたいときは", ja: "どなたか座っていらっしゃいますか？", en: "Is anyone sitting here?" },
+        { id: 577, context: "【Scene07-03 ジャズディナー】ガイドブックにも載っているけど", ja: "このショーはかなり人気があるんですか？", en: "Is this show very popular?" },
+        { id: 578, context: "【Scene07-03 ジャズディナー】ショーの時間はしっかりチェックしておきましょう。", ja: "ショーの時間は何時ですか？", en: "What are the show times?" },
+        { id: 579, context: "【Scene07-03 ジャズディナー】どうせならいい席に座りたいものです。", ja: "ステージの近くのテーブルがいいのですが", en: "I'd like a table near the stage." },
+        { id: 580, context: "【Scene07-03 ジャズディナー】観て聴いて食べて、最高の時をすごしたら", ja: "ストレス発散したよ！", en: "I got rid of my stress!" },
+
+        // --- Scene07-04 スポーツ観戦チケットを入手しよう！（前編） ---
+        { id: 581, context: "【Scene07-04 スポーツ前編】チケットを取るのはかなり難しいだろうけど、アメリカと言えば", ja: "ＮＢＡの試合を観たいのですが", en: "I'd like to see an NBA game." },
+        { id: 582, context: "【Scene07-04 スポーツ前編】チケットを取るのはかなり難しいだろうけど、イギリスと言えば", ja: "プレミアシップのチケットはどうすれば入手できますか？", en: "How can I get Premiership tickets?" },
+        { id: 583, context: "【Scene07-04 スポーツ前編】今日、何か観戦したいなあと思いついたら その１", ja: "今日大きな試合はありますか？", en: "Are there any big games today?" },
+        { id: 584, context: "【Scene07-04 スポーツ前編】今日、何か観戦したいなあと思いついたら その２", ja: "今日はどのチームが試合をするんですか？", en: "What teams are playing today?" },
+        { id: 585, context: "【Scene07-04 スポーツ前編】今日、ヤンキースの試合を観戦したいなあと思いついたら", ja: "今日ヤンキースの試合はありますか？", en: "Is there a Yankees game today?" },
+        { id: 586, context: "【Scene07-04 スポーツ前編】当日だとたいていこう言われてしまいます。", ja: "すみません、売り切れです", en: "Sorry, they are sold out." },
+        { id: 587, context: "【Scene07-04 スポーツ前編】まだ座席の空きがあるようだったら、このように聞いてみましょう。", ja: "どの席なら手に入りますか？", en: "What seats are still available?" },
+        { id: 588, context: "【Scene07-04 スポーツ前編】当日だとこういうこともあります。", ja: "あいにく立見席しかありません", en: "I'm afraid we only have standing room." },
+        { id: 589, context: "【Scene07-04 スポーツ前編】お気に入りチームの試合の日程が知りたいときは", ja: "シアトルマリナーズはいつ試合をしますか？", en: "When are the Seattle Mariners playing?" },
+        { id: 590, context: "【Scene07-04 スポーツ前編】満席だったら、次の機会を待ちましょう。", ja: "いつの席ならありますか？", en: "When do you have seats available?" },
+
+        // --- Scene07-05 スポーツ観戦チケットを入手しよう！（後編） ---
+        { id: 591, context: "【Scene07-05 スポーツ後編】試合はやっぱり全体を見渡したいから", ja: "できるだけ中央がいいです", en: "I'd like as close to center as possible." },
+        { id: 592, context: "【Scene07-05 スポーツ後編】とりあえず、残っている中でいちばんいい席を取りたいときは", ja: "手に入る中で一番いい席を２枚ください", en: "The two best seats available, please." },
+        { id: 593, context: "【Scene07-05 スポーツ後編】野球の座席ならこのように伝えます。", ja: "外野席を３枚ください", en: "Three seats in the outfield, please." },
+        { id: 594, context: "【Scene07-05 スポーツ後編】試合の開始時刻はしっかり確認しておきましょう。", ja: "試合は何時に始まりますか？", en: "What time does the game start?" },
+        { id: 595, context: "【Scene07-05 スポーツ後編】球場へのアクセス方法がわからないときは", ja: "球場へはどのように行けますか？", en: "How can I get to the stadium?" },
+        { id: 596, context: "【Scene07-05 スポーツ後編】電話でチケットを予約した場合、当日受け取ることが多いです。", ja: "チケットはどこで受け取れますか？", en: "Where can I pick up the tickets?" },
+        { id: 597, context: "【Scene07-05 スポーツ後編】英語でチケットを入手できたら、喜びもひとしお。", ja: "ついにチケットを手に入れた！", en: "I finally got a ticket!" },
+        { id: 598, context: "【Scene07-05 スポーツ後編】チケットを手にしたら、試合当日まで…", ja: "待ちきれないよ！", en: "I can't wait!" },
+        { id: 599, context: "【Scene07-05 スポーツ後編】試合当日。一瞬目をはなした隙に点が入ってたら", ja: "今誰が点入れたの？", en: "Who just scored?" },
+        { id: 600, context: "【Scene07-05 スポーツ後編】スーパープレイを目の当たりにしたら", ja: "スゲー！", en: "Awesome!" },
+
+        // --- Scene07-06 カジノで遊ぼう！ ---
+        { id: 601, context: "【Scene07-06 カジノ】まずはチップをいくらか買いましょう。", ja: "チップはどこで買えますか？", en: "Where can I get chips?" },
+        { id: 602, context: "【Scene07-06 カジノ】ささやかに遊びたいので、とりあえず", ja: "チップを10ドル分下さい", en: "Ten dollars worth of chips, please." },
+        { id: 603, context: "【Scene07-06 カジノ】カジノといえばスロットでしょう。", ja: "スロットマシーンをやりたいのですが", en: "I'd like to play the slot machines." },
+        { id: 604, context: "【Scene07-06 カジノ】一緒にプレイしている友人と", ja: "大当たりしたら、山分けしようね", en: "If we hit the jackpot, let's split the money." },
+        { id: 605, context: "【Scene07-06 カジノ】カジノといえばルーレットでしょう。", ja: "私たちも参加していいですか？", en: "Can we join in?" },
+        { id: 606, context: "【Scene07-06 カジノ】大金をつぎ込む勇気はやっぱりないので", ja: "最低賭け金はいくらですか？", en: "What's the minimum bet?" },
+        { id: 607, context: "【Scene07-06 カジノ】ルーレットに初挑戦。頼りになるのは勘のみですが", ja: "ここに５ドル賭けます", en: "I'll bet five dollars on this." },
+        { id: 608, context: "【Scene07-06 カジノ】ちょっとぐらい損したって、勝つまでは", ja: "続けます", en: "I'll keep playing." },
+        { id: 609, context: "【Scene07-06 カジノ】引き際が肝心です。破産する前に", ja: "やめます", en: "I'm out." },
+        { id: 610, context: "【Scene07-06 カジノ】ツキが全くないのか", ja: "ギャンブルではいつも痛い目をみるよ", en: "I always get burned at gambling." },
+        { id: 611, context: "【Scene07-06 カジノ】本日カジノデビューを果たした友人いわく", ja: "今日はいっぱいもうけちゃった！", en: "I won a lot of money today!" },
+
+        // --- Scene08-01 郵便局と写真屋さんにて ---
+        { id: 612, context: "【Scene08-01 郵便・写真】ハガキや手紙、小包を航空便で日本に送りたいときはこう言います。", ja: "これを航空便で日本に送りたいのですが", en: "I'd like to send this to Japan by airmail." },
+        { id: 613, context: "【Scene08-01 郵便・写真】料金を聞いてみよう", ja: "日本にハガキを送るのはいくらかかりますか？", en: "How much is it to send a postcard to Japan?" },
+        { id: 614, context: "【Scene08-01 郵便・写真】日数を聞いてみよう", ja: "日本まで船便でどれくらいかかりますか？", en: "How long does it take to Japan by ship?" },
+        { id: 615, context: "【Scene08-01 郵便・写真】５枚ハガキを送りたいので…", ja: "４０セントの切手を５枚ください", en: "Five 40 cent stamps, please." },
+        { id: 616, context: "【Scene08-01 郵便・写真】できればキレイな切手で送りたいので", ja: "何か記念切手はありますか？", en: "Do you have any commemorative stamps?" },
+        { id: 617, context: "【Scene08-01 郵便・写真】小包を送ろう その１", ja: "この小包の重さを量っていただけますか？", en: "Could you weigh this parcel?" },
+        { id: 618, context: "【Scene08-01 郵便・写真】小包を送ろう その２", ja: "中に手紙を入れてもいいですか？", en: "May I enclose a letter?" },
+        { id: 619, context: "【Scene08-01 郵便・写真】小包を送ろう その３", ja: "この小包に保険をかけたいのですが", en: "I'd like to insure this parcel." },
+        { id: 620, context: "【Scene08-01 郵便・写真】小包を送ろう その４", ja: "中は割れ物です", en: "The contents are fragile." },
+        { id: 621, context: "【Scene08-01 郵便・写真】写真を現像してもらいたいときは", ja: "このフィルムを現像してください", en: "I'd like to have this film developed." },
+        { id: 622, context: "【Scene08-01 郵便・写真】焼き増ししたいときはこう言います。", ja: "焼増ししたいのですが", en: "I'd like to have some copies made." },
+
+        // --- Scene08-02 美容院を利用してみよう ---
+        { id: 623, context: "【Scene08-02 美容院】急に髪型を変えたくなったので、美容院へ。", ja: "予約が必要ですか？", en: "Do I need an appointment?" },
+        { id: 624, context: "【Scene08-02 美容院】今日はとりあえずオーソドックスに", ja: "シャンプーとカットをお願いします", en: "A shampoo and a haircut, please." },
+        { id: 625, context: "【Scene08-02 美容院】あまり時間の余裕がないときは、前もって聞いておきましょう。", ja: "パーマをかけるのにはどれくらい時間がかかりますか？", en: "How long does it take to get a perm?" },
+        { id: 626, context: "【Scene08-02 美容院】次の予定があるときは、このようにお願いしておくと安心です。", ja: "６時までに終わらせていただけますか？", en: "Could you finish by six o'clock?" },
+        { id: 627, context: "【Scene08-02 美容院】美容師さんに希望の髪型を伝えよう その１", ja: "金髪にしたいのですが", en: "I'd like to dye my hair blond." },
+        { id: 628, context: "【Scene08-02 美容院】美容師さんに希望の髪型を伝えよう その２", ja: "軽くパーマをかけてください", en: "I'd like to get a light perm." },
+        { id: 629, context: "【Scene08-02 美容院】美容師さんに希望の髪型を伝えよう その３", ja: "キャメロン・ディアスみたいにしてください", en: "I want to look like Cameron Diaz." },
+        { id: 630, context: "【Scene08-02 美容院】いちばん簡単で確実な方法は、メニューや雑誌の写真を指さして", ja: "こんな風にしてください", en: "Just like this, please." },
+        { id: 631, context: "【Scene08-02 美容院】とくに希望の髪型がないときは、こんな風に聞いてみるのもいいかもしれません。", ja: "今どんな髪型がはやってるんですか？", en: "What kind of style is popular now?" },
+        { id: 632, context: "【Scene08-02 美容院】美容師さんに仕上げの指示を出そう その１", ja: "サイドにレイヤーを入れていただけますか？", en: "Could you layer the sides?" },
+        { id: 633, context: "【Scene08-02 美容院】美容師さんに仕上げの指示を出そう その２", ja: "前髪をもう少し短くしてください", en: "Please cut the bangs a little shorter." },
+
+        // --- Scene08-03 アパートを借りて自炊に挑戦！ ---
+        { id: 634, context: "【Scene08-03 アパート・自炊】不動産屋さんに希望の部屋を伝えよう その１", ja: "家具つきのアパートを６ヶ月借りたいのですが", en: "I'd like to rent a furnished apartment for six months." },
+        { id: 635, context: "【Scene08-03 アパート・自炊】不動産屋さんに希望の部屋を伝えよう その２", ja: "できれば都市の中心部に近いアパートがいいんですけど", en: "I'd prefer an apartment near the center of the city." },
+        { id: 636, context: "【Scene08-03 アパート・自炊】絶対欠かせない条件 その１", ja: "そのアパートにはエアコンが付いてますか？", en: "Does the apartment have an air conditioner?" },
+        { id: 637, context: "【Scene08-03 アパート・自炊】絶対欠かせない条件 その２", ja: "そのアパートのそばにスーパーマーケットはありますか？", en: "Are there any supermarkets near the apartment?" },
+        { id: 638, context: "【Scene08-03 アパート・自炊】絶対欠かせない条件 その３", ja: "この地域は安全ですか？", en: "Is this area safe?" },
+        { id: 639, context: "【Scene08-03 アパート・自炊】気に入った部屋が見つかったら、お値段を聞いてみましょう。", ja: "家賃はいくらですか？", en: "How much is the rent?" },
+        { id: 640, context: "【Scene08-03 アパート・自炊】表示価格に何が含まれているのか確認しておきましょう。", ja: "家賃に光熱費は含まれてますか？", en: "Are utilities included in the rent?" },
+        { id: 641, context: "【Scene08-03 アパート・自炊】支払方法について質問します。", ja: "家賃はどのように払うのですか？", en: "How do I pay the rent?" },
+        { id: 642, context: "【Scene08-03 アパート・自炊】近所のスーパーにて。今日は日本料理を作りたいので", ja: "何か日本の食品はありますか？", en: "Do you have any Japanese foods?" },
+        { id: 643, context: "【Scene08-03 アパート・自炊】近所のスーパーにて。今日は牛をめいっぱい食べたいので", ja: "牛肉を１ポンドください", en: "One pound of beef, please." },
+        { id: 644, context: "【Scene08-03 アパート・自炊】近所のスーパーにて。食材の予算が決まっているときはこう頼んでみましょう。", ja: "ホタテを２０ドル分ください", en: "Twenty dollars worth of scallops, please." },
+
+        // --- Scene08-04 銀行口座を開設しよう ---
+        { id: 645, context: "【Scene08-04 銀行口座】旅行者でも、パスポートとお金があれば開いてもらえます。", ja: "当座預金口座を開きたいのですが", en: "I'd like to open a checking account." },
+        { id: 646, context: "【Scene08-04 銀行口座】預けるお金は小額でもＯＫ。", ja: "１０ドル預けます", en: "I'd like to deposit ten dollars." },
+        { id: 647, context: "【Scene08-04 銀行口座】利息なんてあまり期待していないけど、念のため。", ja: "金利はどれくらいですか？", en: "What's the interest rate?" },
+        { id: 648, context: "【Scene08-04 銀行口座】定期的にチェックしておきましょう。", ja: "残高はいくらですか？", en: "What's the balance?" },
+        { id: 649, context: "【Scene08-04 銀行口座】銀行でもたいてい外貨の両替ができます。", ja: "両替したいのですが", en: "I'd like to exchange some money." },
+        { id: 650, context: "【Scene08-04 銀行口座】銀行ですることと言えば その１", ja: "送金したいのですが", en: "I'd like to make a bank transfer." },
+        { id: 651, context: "【Scene08-04 銀行口座】銀行ですることと言えば その２", ja: "お金を下ろしたいのですが", en: "I'd like to withdraw some money." },
+        { id: 652, context: "【Scene08-04 銀行口座】銀行ですることと言えば その３", ja: "小切手を現金にしたいのですが", en: "I'd like to cash a check." },
+        { id: 653, context: "【Scene08-04 銀行口座】何をするにもたいてい取られるものですが", ja: "手数料はかかりますか？", en: "Is there a service charge?" },
+
+        // --- Scene09-01 強盗に襲われた！ ---
+        { id: 654, context: "【Scene09-01 強盗】こう言われたら、絶対に動いてはいけません。", ja: "動くな！", en: "Don't move!" },
+        { id: 655, context: "【Scene09-01 強盗】こう言われたら、両手を上げましょう。", ja: "手をあげろ！", en: "Hands up!" },
+        { id: 656, context: "【Scene09-01 強盗】このように言われることもあるかもしれません。", ja: "手を頭の上にのせろ！", en: "Put your hands on your head!" },
+        { id: 657, context: "【Scene09-01 強盗】こう言われたら、手を上げたまま相手にお金を取らせましょう。", ja: "金をよこせ！", en: "Give me your money!" },
+        { id: 658, context: "【Scene09-01 強盗】あごや目線で示しながら", ja: "お金はここにあります", en: "I have money here." },
+        { id: 659, context: "【Scene09-01 強盗】たまたま一銭も持ち合わせていなかったら", ja: "お金は持っていません", en: "I'm not carrying any money." },
+        { id: 660, context: "【Scene09-01 強盗】現金・金目の物をすべて取らせたら", ja: "これで全部です", en: "This is all I have." },
+        { id: 661, context: "【Scene09-01 強盗】こう言われたら、相手に背を向けずに後退します。", ja: "そのまま後ろに下がれ！", en: "Back off!" },
+        { id: 662, context: "【Scene09-01 強盗】こう言われたら、財布や金目の物を床に落とします。", ja: "金目の物を落とせ！", en: "Drop it!" },
+
+        // --- Scene09-02 盗難にあった・紛失した ---
+        { id: 663, context: "【Scene09-02 盗難・紛失】公園をのどかに散歩していたら、かばんをひったくられた！そんなときは", ja: "ドロボー！", en: "Thief!" },
+        { id: 664, context: "【Scene09-02 盗難・紛失】もしかしたら誰かが捕まえてくれるかもしれません。", ja: "（彼を）捕まえて！", en: "Catch him!" },
+        { id: 665, context: "【Scene09-02 盗難・紛失】ひったくり犯に逃げられてしまったら、とにかく交番へ急ぎます。", ja: "一番近い交番をご存知ですか？", en: "Do you know the nearest police station from here?" },
+        { id: 666, context: "【Scene09-02 盗難・紛失】警察に被害を説明しよう 盗難編", ja: "バッグが盗まれました", en: "My bag was stolen." },
+        { id: 667, context: "【Scene09-02 盗難・紛失】警察に被害を説明しよう ひったくり編", ja: "バッグがセントラルパーク（Central Park）でひったくられました", en: "My bag was snatched in Central Park." },
+        { id: 668, context: "【Scene09-02 盗難・紛失】警察に被害を説明しよう スリ編", ja: "財布がバスの中ですられました", en: "My wallet was pick-pocketed on the bus." },
+        { id: 669, context: "【Scene09-02 盗難・紛失】自分の不注意で物をなくしてしまったときは、遺失物係へ向かいます。", ja: "遺失物係はどこにあるかご存知ですか？", en: "Do you know where the lost and found is?" },
+        { id: 670, context: "【Scene09-02 盗難・紛失】遺失物係で状況を説明します。", ja: "バッグをバスの中に置き忘れてしまいました", en: "I left my bag on the bus." },
+        { id: 671, context: "【Scene09-02 盗難・紛失】物を紛失したときはこのように言います。", ja: "パスポートをなくしてしまいました", en: "I lost my passport." },
+        { id: 672, context: "【Scene09-02 盗難・紛失】速やかに再発行の手続きをとりましょう。「○○をなくしました」と伝えた上で", ja: "どこで再発行してもらえますか？", en: "Where can I have it reissued?" },
+
+        // --- Scene09-03 警察に届け出よう ---
+        { id: 673, context: "【Scene09-03 警察へ届出】盗難にあってしまったら、警察へ届けを出しに行きます。", ja: "盗難の届けを出したいのですが", en: "I'd like to report a theft." },
+        { id: 674, context: "【Scene09-03 警察へ届出】警察に聞かれるであろう質問 その１", ja: "どんなかばんでした？", en: "What kind of bag was it?" },
+        { id: 675, context: "【Scene09-03 警察へ届出】かばんの特徴を伝えよう その１ 手で大きさを示しつつ", ja: "これくらいの大きさでした", en: "It was this big." },
+        { id: 676, context: "【Scene09-03 警察へ届出】かばんの特徴を伝えよう その２", ja: "青いショルダーバッグでした", en: "It was a blue shoulder bag." },
+        { id: 677, context: "【Scene09-03 警察へ届出】かばんの特徴を伝えよう その３", ja: "黒で、プラダのロゴが入ってました", en: "It was black and had the Prada logo." },
+        { id: 678, context: "【Scene09-03 警察へ届出】警察に聞かれるであろう質問 その２", ja: "何が入っていましたか？", en: "What was in it?" },
+        { id: 679, context: "【Scene09-03 警察へ届出】かばんの中身を説明します。", ja: "財布とクレジットカード、パスポートが入ってました", en: "My wallet, credit cards and passport were in it." },
+        { id: 680, context: "【Scene09-03 警察へ届出】警察に聞かれるであろう質問 その３", ja: "お金はいくら持っていましたか？", en: "How much money did you have?" },
+        { id: 681, context: "【Scene09-03 警察へ届出】財布の中身を説明します。", ja: "現金で３００ドルくらい持ってました", en: "I had about 300 dollars in cash." },
+        { id: 682, context: "【Scene09-03 警察へ届出】保険に入っている場合、証明書があれば補償してもらえることがあるので", ja: "盗難証明書を作ってください", en: "Please make a certificate of theft." },
+        { id: 683, context: "【Scene09-03 警察へ届出】証明書の発行をお願いすると、このように言われます。", ja: "この用紙に記入してください", en: "Fill out this form, please." },
+        { id: 684, context: "【Scene09-03 警察へ届出】かなり望みは薄いけど、もし、万が一", ja: "見つかったら知らせてください", en: "Please let me know if you find it." },
+
+        // --- Scene09-04 再発行の手続きは？ ---
+        { id: 685, context: "【Scene09-04 再発行手続】クレジットカードを紛失したら、まずはカード会社に連絡して", ja: "カードを無効にしてください", en: "I'd like to cancel my credit card." },
+        { id: 686, context: "【Scene09-04 再発行手続】カードナンバーを伝えます。", ja: "カードナンバーは１２３４－５６７８ー９９９９です", en: "My card number is 1234-5678-9999." },
+        { id: 687, context: "【Scene09-04 再発行手続】パスポートを紛失してしまったら", ja: "日本大使館に連絡をとりたいのですが", en: "I'd like to contact the Japanese Embassy." },
+        { id: 688, context: "【Scene09-04 再発行手続】クレジットカード・Ｔ／Ｃ・パスポート、どれを紛失しても必ず使うフレーズです。", ja: "再発行していただけますか？", en: "Could you reissue it?" },
+        { id: 689, context: "【Scene09-04 再発行手続】署名欄にサインをしていないＴ／Ｃは無効とみなされます。", ja: "トラベラーズチェックの署名欄には全部サインがしてあります", en: "All traveler's checks have the holder's signature." },
+        { id: 690, context: "【Scene09-04 再発行手続】再発行の手続きには、購入控えと身分証明が必要です。", ja: "これが購入控えです", en: "Here's the purchase agreement." },
+        { id: 691, context: "【Scene09-04 再発行手続】購入控えも盗まれてしまったら…", ja: "購入控えも一緒に盗まれてしまいました", en: "My purchase agreement was stolen with them." },
+        { id: 692, context: "【Scene09-04 再発行手続】カウンターサインをしてしまったＴ／Ｃは無効とみなされます。", ja: "カウンターサインはしてありません", en: "They are not countersigned." },
+
+        // --- Scene09-05 交通事故・体調不良 ---
+        { id: 693, context: "【Scene09-05 事故・体調不良】もしも友人が交通事故にあってしまったら", ja: "友人が車にはねられました", en: "My friend was hit by a car." },
+        { id: 694, context: "【Scene09-05 事故・体調不良】救急車が必要なときは、このように伝えます。", ja: "救急車を呼んでください", en: "Please call an ambulance." },
+        { id: 695, context: "【Scene09-05 事故・体調不良】友人の状況を伝えます。", ja: "（彼女は）ケガしています", en: "She's injured." },
+        { id: 696, context: "【Scene09-05 事故・体調不良】友人の容態を冷静に伝えましょう。", ja: "（彼女は）ひどく出血しています", en: "She's bleeding heavily." },
+        { id: 697, context: "【Scene09-05 事故・体調不良】救急車がすぐに呼べないような状況なら", ja: "（彼女に）応急処置をお願いします", en: "Please give her first aid." },
+        { id: 698, context: "【Scene09-05 事故・体調不良】ホテルに滞在中具合が悪くなってしまったら、フロントに言いましょう。", ja: "医者に診てもらいたいのですが", en: "I'd like to see a doctor." },
+        { id: 699, context: "【Scene09-05 事故・体調不良】専門のドクターがいるホテルもあります。", ja: "ホテルに医者はいますか？", en: "Do you have a doctor in the hotel?" },
+        { id: 700, context: "【Scene09-05 事故・体調不良】体調などを英語で伝える自信がないときは、このように聞いてみましょう。", ja: "日本語を話せる医者はいますか？", en: "Is there a doctor who can speak Japanese?" },
+        { id: 701, context: "【Scene09-05 事故・体調不良】外出先で急に具合が悪くなってしまったら", ja: "最寄の病院はどこですか？", en: "Where is the nearest hospital?" },
+        { id: 702, context: "【Scene09-05 事故・体調不良】ドクターにまず聞かれること その１", ja: "どうされました？", en: "What's wrong?" },
+        { id: 703, context: "【Scene09-05 事故・体調不良】ドクターにまず聞かれること その２", ja: "気分はどうですか？", en: "How do you feel?" },
+
+        // --- Scene09-06 ドクターに症状を説明しよう その１ ---
+        { id: 704, context: "【Scene09-06 症状説明1】ドクターに症状を説明しよう 内科系 その１", ja: "めまいがします", en: "I feel dizzy." },
+        { id: 705, context: "【Scene09-06 症状説明1】ドクターに症状を説明しよう 内科系 その２", ja: "吐き気がします", en: "I feel sick." },
+        { id: 706, context: "【Scene09-06 症状説明1】ドクターに症状を説明しよう 内科系 その３", ja: "体がだるいんです", en: "I feel drained." },
+        { id: 707, context: "【Scene09-06 症状説明1】ドクターに症状を説明しよう 内科系 その４", ja: "寒気がします", en: "I have a chill." },
+        { id: 708, context: "【Scene09-06 症状説明1】ドクターに症状を説明しよう 内科系 その５", ja: "熱があります", en: "I have a fever." },
+        { id: 709, context: "【Scene09-06 症状説明1】ドクターに症状を説明しよう 内科系 その６", ja: "のどが痛いです", en: "I have a sore throat." },
+        { id: 710, context: "【Scene09-06 症状説明1】ドクターに症状を説明しよう 内科系 その７", ja: "頭が痛いんです", en: "I have a headache." },
+        { id: 711, context: "【Scene09-06 症状説明1】ドクターに症状を説明しよう 内科系 その８", ja: "お腹が痛いんです", en: "I have a stomachache." },
+        { id: 712, context: "【Scene09-06 症状説明1】ドクターに症状を説明しよう 内科系 その９", ja: "お腹をこわしてます", en: "I have an upset stomach." },
+        { id: 713, context: "【Scene09-06 症状説明1】ドクターに症状を説明しよう 内科系 その１０", ja: "下痢をしています", en: "I have diarrhea." },
+
+        // --- Scene09-07 ドクターに症状を説明しよう その２ ---
+        { id: 714, context: "【Scene09-07 症状説明2】ドクターに症状を説明しよう 内科系 その１１", ja: "吐いてます", en: "I've been vomiting." },
+        { id: 715, context: "【Scene09-07 症状説明2】ドクターに症状を説明しよう 内科系 その１２", ja: "咳をしています", en: "I've been coughing." },
+        { id: 716, context: "【Scene09-07 症状説明2】ドクターに症状を説明しよう 内科系 その１３", ja: "くしゃみがとまりません", en: "I keep sneezing." },
+        { id: 717, context: "【Scene09-07 症状説明2】ドクターに症状を説明しよう 内科系 その１４", ja: "息がくるしいです", en: "I have difficulty breathing." },
+        { id: 718, context: "【Scene09-07 症状説明2】ドクターに症状を説明しよう 内科系 その１５", ja: "ここが痛みます", en: "I have a pain right here." },
+        { id: 719, context: "【Scene09-07 症状説明2】ドクターに症状を説明しよう 内科系 その１６", ja: "食欲がありません", en: "I have no appetite." },
+        { id: 720, context: "【Scene09-07 症状説明2】ドクターに症状を説明しよう 外科系 その１", ja: "手をやけどしました", en: "I burned my hand." },
+        { id: 721, context: "【Scene09-07 症状説明2】ドクターに症状を説明しよう 外科系 その２", ja: "手をガラスで切ってしまいました", en: "I cut my hand on some glass." },
+        { id: 722, context: "【Scene09-07 症状説明2】ドクターに症状を説明しよう 外科系 その３", ja: "足が折れているみたいです", en: "I think my leg is broken." },
+
+        // --- Scene09-08 ドクターとの重要な会話 ---
+        { id: 723, context: "【Scene09-08 医師との対話】診察中、ドクターに聞かれるかもしれないこと その１", ja: "何かアレルギーはありますか？", en: "Do you have any allergies?" },
+        { id: 724, context: "【Scene09-08 医師との対話】診察中、ドクターに聞かれるかもしれないこと その２", ja: "何か持病はありますか？", en: "Do you have any chronic illnesses?" },
+        { id: 725, context: "【Scene09-08 医師との対話】必ず伝えておきたいこと その１", ja: "抗生物質にアレルギーがあるんです", en: "I'm allergic to antibiotics." },
+        { id: 726, context: "【Scene09-08 医師との対話】必ず伝えておきたいこと その２", ja: "この薬を毎日飲んでます", en: "I take this medicine everyday." },
+        { id: 727, context: "【Scene09-08 医師との対話】必ず伝えておきたいこと その３", ja: "妊娠しています", en: "I'm pregnant." },
+        { id: 728, context: "【Scene09-08 医師との対話】今の症状に心当たりがあるなら、すべて話しておきましょう。", ja: "生のカニに当たったんだと思います", en: "I think I got ill by eating raw crab." },
+        { id: 729, context: "【Scene09-08 医師との対話】これからどうすればよいか聞いておきましょう。", ja: "旅を続けられますか？", en: "Can I continue my trip?" },
+        { id: 730, context: "【Scene09-08 医師との対話】いちばん気になることは", ja: "治るまでどれくらいかかるでしょうか？", en: "How long will it take to recover?" },
+        { id: 731, context: "【Scene09-08 医師との対話】明日帰国で、何時間にも及ぶフライトがひかえていたら", ja: "明日飛行機に乗れますか？", en: "Can I get on an airplane tomorrow?" },
+        { id: 732, context: "【Scene09-08 医師との対話】腹痛の原因は盲腸とのこと。手術するんだとしたら…", ja: "入院しなくてはなりませんか？", en: "Do I have to stay in the hospital?" },
+
+        // --- Scene09-09 ドクターがよく言うフレーズ集 ---
+        { id: 733, context: "【Scene09-09 医師の指示】レントゲンを撮るときや、背中に聴診器をあてられたときに言われます。", ja: "息を大きく吸って", en: "Take a deep breath." },
+        { id: 734, context: "【Scene09-09 医師の指示】のどを診察するときに言われます。", ja: "口を開けて", en: "Open your mouth." },
+        { id: 735, context: "【Scene09-09 医師の指示】こう言われたら、診察台の上に横になりましょう。", ja: "そこに横になってください", en: "Please lie down there." },
+        { id: 736, context: "【Scene09-09 医師の指示】覚えておくと安心して診察が受けられるフレーズ その１", ja: "血圧を計ります", en: "I'm going to check your blood pressure." },
+        { id: 737, context: "【Scene09-09 医師の指示】覚えておくと安心して診察が受けられるフレーズ その２", ja: "熱を計ります", en: "I'm going to check your temperature." },
+        { id: 738, context: "【Scene09-09 医師の指示】覚えておくと安心して診察が受けられるフレーズ その３", ja: "注射します", en: "I'm going to give you a shot." },
+        { id: 739, context: "【Scene09-09 医師の指示】覚えておくと安心して診察が受けられるフレーズ その４", ja: "血液検査をします", en: "I'm going to test your blood." },
+        { id: 740, context: "【Scene09-09 医師の指示】ドクターからの指示例 その１", ja: "２，３日よく休んでください", en: "Take a good rest for a couple of days." },
+        { id: 741, context: "【Scene09-09 医師の指示】ドクターからの指示例 その２", ja: "お酒とタバコはしばらく控えてください", en: "Please refrain from drinking and smoking for a while." },
+        { id: 742, context: "【Scene09-09 医師の指示】ドクターからの指示例 その３", ja: "手術が必要です", en: "You need to have an operation." },
+
+        // --- Scene09-10 診察を終えて薬をもらう ---
+        { id: 743, context: "【Scene09-10 処方薬・会計】保険に入っていれば、診察代も補償してもらえます。", ja: "旅行保険に入っています", en: "I have traveler's insurance." },
+        { id: 744, context: "【Scene09-10 処方薬・会計】診察代を保険会社に請求するとき必要なので", ja: "診断書を書いていただけますか？", en: "Could you write a medical certificate?" },
+        { id: 745, context: "【Scene09-10 処方薬・会計】受付からの指示", ja: "この処方箋を薬局に持って行って薬を買ってください", en: "Take this prescription to a pharmacy and buy medicine." },
+        { id: 746, context: "【Scene09-10 処方薬・会計】薬局の場所を聞いておきましょう。", ja: "一番近い薬局はどこですか？", en: "Where is the nearest pharmacy?" },
+        { id: 747, context: "【Scene09-10 処方薬・会計】薬局にて、処方箋を渡しながら", ja: "この処方箋の薬をいただけますか？", en: "Could you fill this prescription?" },
+        { id: 748, context: "【Scene09-10 処方薬・会計】薬の飲み方は、しっかり聞いておきましょう。", ja: "どのように服用したらいいですか？", en: "How should I take this?" },
+        { id: 749, context: "【Scene09-10 処方薬・会計】薬局からの指示", ja: "この薬を１日３回食後に飲んでください", en: "Take this medicine three times a day after meals." },
+        { id: 750, context: "【Scene09-10 処方薬・会計】薬に関して気になることは、きちんと聞いておきましょう。", ja: "この薬には副作用はありますか？", en: "Does this medicine have any side-effects?" },
+        { id: 751, context: "【Scene09-10 処方薬・会計】車を運転しなければならないとき、気になることは", ja: "この薬で眠くなりますか？", en: "Will this medicine make me sleepy?" },
+        { id: 752, context: "【Scene09-10 処方薬・会計】いろいろと心配をかけた友人やフロントの人には、\"Thank you.\"の言葉とともに", ja: "だいぶ気分がよくなりました", en: "I feel much better." },
+
+        // --- Scene10-01 覚えておきたい！ベーシック・フレーズ集 ---
+        { id: 753, context: "【Scene10-01 ベーシック】よく使うフレーズ 第１位！声をかけるとき、ちょっとしたことを謝るときに", ja: "すみません", en: "Excuse me." },
+        { id: 754, context: "【Scene10-01 ベーシック】相手の言うことを聞き返すときは", ja: "なんとおっしゃいました？", en: "Pardon?" },
+        { id: 755, context: "【Scene10-01 ベーシック】ていねいにお願いしたいときは", ja: "もう一度言っていただけますか？", en: "Could you say that again?" },
+        { id: 756, context: "【Scene10-01 ベーシック】相手の言っていることは何となく聞き取れるものの、単語がさっぱりわからないときは", ja: "もっと簡単に言っていただけますか？", en: "Could you say that more simply?" },
+        { id: 757, context: "【Scene10-01 ベーシック】相手の話すペースが速くて聞き取れないときは", ja: "もっとゆっくり話していただけますか？", en: "Could you speak more slowly, please?" },
+        { id: 758, context: "【Scene10-01 ベーシック】相手の言っていることは聞き取れたけど、意味がわからないときは", ja: "それはどういう意味ですか？", en: "What do you mean by that?" },
+        { id: 759, context: "【Scene10-01 ベーシック】標識やパンフレット、注意書きなどで、意味のわからない箇所があったら", ja: "これはどういう意味ですか？", en: "What does this mean?" },
+        { id: 760, context: "【Scene10-01 ベーシック】未知の物体に遭遇したときはもちろん、請求書に覚えのない項目があったときでも", ja: "これは何ですか？", en: "What's this?" },
+
+        // --- Scene10-02 コミュニケーションを円滑にするために ---
+        { id: 761, context: "【Scene10-02 会話を円滑に】レストランやホテルの人、道ゆく人などが気軽に交わすあいさつ", ja: "よい一日を！", en: "Have a nice day!" },
+        { id: 762, context: "【Scene10-02 会話を円滑に】空港、ツーリストインフォメーション、ホテルの人などによく言われる言葉は", ja: "滞在を楽しんでくださいね", en: "Enjoy your stay." },
+        { id: 763, context: "【Scene10-02 会話を円滑に】人に道をゆずるときや、レストランにて先に料理がきた友人に", ja: "お先にどうぞ", en: "Go ahead." },
+        { id: 764, context: "【Scene10-02 会話を円滑に】ひととおり話し終えたときや、レストランで注文し終えたときに", ja: "以上です", en: "That's it." },
+        { id: 765, context: "【Scene10-02 会話を円滑に】「日本っていうと、あの小さな島国よね？」などと言われたときは", ja: "そのとおり", en: "That's right." },
+        { id: 766, context: "【Scene10-02 会話を円滑に】「和式のトイレってどうしてあんな形なの？」なんて聞かれて", ja: "わかりません", en: "I don't know." },
+        { id: 767, context: "【Scene10-02 会話を円滑に】「※×＆％＃＠~＄＊！？」とまくしたてられたら", ja: "わかりません", en: "I don't understand." },
+        { id: 768, context: "【Scene10-02 会話を円滑に】大切な物を壊してしまう、というレベルのことをしでかしてしまったら", ja: "本当にすみません", en: "I'm terribly sorry." },
+        { id: 769, context: "【Scene10-02 会話を円滑に】「ありがとう」よりも強い感謝の気持ちを表したいときは", ja: "本当にありがとう", en: "Thank you very much indeed." },
+        { id: 770, context: "【Scene10-02 会話を円滑に】フォームに記入したり署名したりしたときは、相手に見せつつ", ja: "これでいいですか？", en: "Is this OK?" },
+        { id: 771, context: "【Scene10-02 会話を円滑に】英語力不足が原因で、気まずい事態になってしまったときは", ja: "すみません、英語は苦手なんです", en: "Sorry, I'm not good at English." },
+        { id: 772, context: "【Scene10-02 会話を円滑に】公共の場などで、英語でうまく意思を伝えられないときは", ja: "日本語の話せる方はいますか？", en: "Is there someone who can speak Japanese?" },
+
+        // --- Scene10-03 覚えておきたい！自己紹介フレーズ集 ---
+        { id: 773, context: "【Scene10-03 自己紹介】右手を差し出しながら言ってみるのもいいかもしれません。", ja: "はじめまして！", en: "Nice to meet you!" },
+        { id: 774, context: "【Scene10-03 自己紹介】英語で自己紹介するときは、ファーストネームを名乗る方がしっくりします。", ja: "健太郎です", en: "I'm Kentaro." },
+        { id: 775, context: "【Scene10-03 自己紹介】日本人の名前は覚えにくいので、ニックネームで。", ja: "ケンと呼んで下さい", en: "Please call me Ken." },
+        { id: 776, context: "【Scene10-03 自己紹介】名前を名乗ったら、出身地も言ってみましょう。", ja: "日本の東京から来ました", en: "I'm from Tokyo, Japan." },
+        { id: 777, context: "【Scene10-03 自己紹介】私のお仕事 学生編 その１", ja: "学生です", en: "I'm a student." },
+        { id: 778, context: "【Scene10-03 自己紹介】私のお仕事 学生編 その２", ja: "英語を専攻してます", en: "I'm majoring in English." },
+        { id: 779, context: "【Scene10-03 自己紹介】私のお仕事 社会人編 その１", ja: "弁護士です", en: "I'm a lawyer." },
+        { id: 780, context: "【Scene10-03 自己紹介】私のお仕事 社会人編 その２", ja: "事務の仕事をしています", en: "I do office work." },
+        { id: 781, context: "【Scene10-03 自己紹介】私のお仕事 社会人編 その３", ja: "コンピュータ関係の仕事をしています", en: "I'm in computers." },
+        { id: 782, context: "【Scene10-03 自己紹介】私のお仕事 社会人編 その４", ja: "保険会社に勤めています", en: "I work for an insurance company." },
+        { id: 783, context: "【Scene10-03 自己紹介】私のお仕事 主婦編", ja: "専業主婦です", en: "I'm a full-time mom." },
+
+        // --- Scene10-04 さらに話を広げるために ---
+        { id: 784, context: "【Scene10-04 話を広げる】出張や修学旅行ではなく", ja: "休暇で来ています", en: "I'm here on vacation." },
+        { id: 785, context: "【Scene10-04 話を広げる】帰国してからのことを考えるとおそろしいけれど", ja: "３週間の休みをとって来ました", en: "I took three weeks off to be here." },
+        { id: 786, context: "【Scene10-04 話を広げる】相手の職業を聞くときはこう言います。", ja: "お仕事は何をしてるんですか？", en: "What do you do for work?" },
+        { id: 787, context: "【Scene10-04 話を広げる】長くてむずかしい名前の人には、ニックネームを教えてもらいましょう。", ja: "何とお呼びしたらよろしいですか？", en: "What should I call you?" },
+        { id: 788, context: "【Scene10-04 話を広げる】この国をえらんだ理由 アメリカ編", ja: "アメリカの文化に興味があるんです", en: "I'm interested in American culture." },
+        { id: 789, context: "【Scene10-04 話を広げる】この国をえらんだ理由 アジア諸国編", ja: "アジアを旅して回ってるんです", en: "I'm traveling around Asia." },
+        { id: 790, context: "【Scene10-04 話を広げる】この国をえらんだ理由 イギリス編", ja: "イギリスのサッカーの試合を観たかったんです", en: "I wanted to see a football match in England." },
+        { id: 791, context: "【Scene10-04 話を広げる】この国をえらんだ理由 韓国編", ja: "韓国料理が大好きなんです", en: "I love Korean food." },
+        { id: 792, context: "【Scene10-04 話を広げる】この国をえらんだ理由 オーストラリア編", ja: "たくさんの野生の動物を見たかったんです", en: "I wanted to see many wild animals." },
+        { id: 793, context: "【Scene10-04 話を広げる】「この国に来たのは○回目です」の言い方は", ja: "タイを訪れたのは今回で２回目です", en: "This is my second visit to Thailand." },
+
+        // --- Scene10-05 また会いたい、そんな人たちに出会ったら ---
+        { id: 794, context: "【Scene10-05 再会の約束】電車やバスで隣になった人と、ものすごく話がはずんだりしたら", ja: "お話しできて本当に楽しかったです", en: "I really enjoyed talking with you." },
+        { id: 795, context: "【Scene10-05 再会の約束】せっかく仲良くなった人たちとは、これからも連絡を取りたいので", ja: "住所を教えていただけませんか？", en: "Could you give me your address?" },
+        { id: 796, context: "【Scene10-05 再会の約束】住所やメールアドレスを聞いたあとに添えると、奥ゆかしくなります。", ja: "もしよろしければ、ですけど", en: "If you don't mind." },
+        { id: 797, context: "【Scene10-05 再会の約束】相手の名前のスペルがわからないときは", ja: "名前のスペルを教えてください", en: "How do you spell your name?" },
+        { id: 798, context: "【Scene10-05 再会の約束】相手の住所を聞きづらいときは、こちらの住所を渡しておきましょう。", ja: "これが私の住所です", en: "Here's my address." },
+        { id: 799, context: "【Scene10-05 再会の約束】本当にまた会いたいと思ったら、素直に伝えましょう。", ja: "また会えるといいなあ", en: "I hope we can meet again." },
+        { id: 800, context: "【Scene10-05 再会の約束】とりあえず、帰国したらいちばんに", ja: "日本からハガキを送ります", en: "I'll send you a postcard from Japan." },
+        { id: 801, context: "【Scene10-05 再会の約束】手紙でもメールでもいいので", ja: "連絡を取りましょう", en: "Let's keep in touch." },
+        { id: 802, context: "【Scene10-05 再会の約束】メールなら気軽に続けられるので", ja: "メールを交換しましょう", en: "Let's e-mail each other." },
+        { id: 803, context: "【Scene10-05 再会の約束】いつかぜひ日本を案内してあげたいものです。", ja: "日本に会いに来てくださいね", en: "Please come to see me in Japan." },
+        { id: 804, context: "【Scene10-05 再会の約束】またお金をためて、絶対遊びに来るぞ！と思ったら", ja: "近いうちにまた戻ってくるよ", en: "I'll be back in the near future." },
+
+        // --- Scene10-06 覚えておきたい！ナンパフレーズ集 ---
+        { id: 805, context: "【Scene10-06 出会い・ナンパ】ナンパの定番フレーズといえば", ja: "すみません、どこかでお会いしたことないですか？", en: "Excuse me, don't I know you from somewhere?" },
+        { id: 806, context: "【Scene10-06 出会い・ナンパ】このように言うこともできます。", ja: "どこかで会ったような気がする", en: "You look familiar." },
+        { id: 807, context: "【Scene10-06 出会い・ナンパ】会ったこともなければ興味もない、そんな人には", ja: "お会いしてないと思います", en: "I don't think we've met." },
+        { id: 808, context: "【Scene10-06 出会い・ナンパ】『ローマの休日』のようなロマンチックな観光ができるかも？", ja: "この辺を案内するよ", en: "I'll show you around here." },
+        { id: 809, context: "【Scene10-06 出会い・ナンパ】「今何時ですか？」と聞いているのではありません。", ja: "今ヒマですか？", en: "Do you have time?" },
+        { id: 810, context: "【Scene10-06 出会い・ナンパ】「今忙しいんです」と断ったら、こんな風に食い下がってくるかもしれません。", ja: "明日はヒマ？", en: "Are you free tomorrow?" },
+        { id: 811, context: "【Scene10-06 出会い・ナンパ】ちょっとさわやかなナンパフレーズ", ja: "ランチをおごらせてよ", en: "Let me buy you lunch." },
+        { id: 812, context: "【Scene10-06 出会い・ナンパ】お誘いを喜んでお受けするときは", ja: "ええ、ぜひ", en: "I'd love to." },
+        { id: 813, context: "【Scene10-06 出会い・ナンパ】上手にナンパを断るフレーズ", ja: "ごめんなさい、今忙しいんです", en: "I'm sorry but I'm busy now." },
+        { id: 814, context: "【Scene10-06 出会い・ナンパ】しつこい相手にはきっぱりと。", ja: "すみませんが興味ないです", en: "I'm sorry but I'm not interested." },
+        { id: 815, context: "【Scene10-06 出会い・ナンパ】さわやかかつ健全にお誘いしたいときは、昼間のグループデートから。", ja: "私たちとランチをいっしょにどうですか？", en: "How about having lunch with us?" },
+
+        // --- Scene11-01 日本紹介（風土・人口） ---
+        { id: 816, context: "【Scene11-01 風土・人口】日本は地理的にこんな国！ その１", ja: "日本は島国なんです", en: "Japan is an island nation." },
+        { id: 817, context: "【Scene11-01 風土・人口】日本は地理的にこんな国！ その２", ja: "日本は４つの主な島とたくさんの小さな島々から成ってます", en: "Japan consists of four main islands and many smaller islands." },
+        { id: 818, context: "【Scene11-01 風土・人口】日本は地理的にこんな国！ その３", ja: "日本は人口密度が高いです", en: "Japan has a high population density." },
+        { id: 819, context: "【Scene11-01 風土・人口】日本は地理的にこんな国！ その４", ja: "日本は住める土地が限られてるんです", en: "Japan has limited land available for housing." },
+        { id: 820, context: "【Scene11-01 風土・人口】日本は地理的にこんな国！ その５", ja: "日本では地震がよく起こります", en: "Earthquakes often occur in Japan." },
+        { id: 821, context: "【Scene11-01 風土・人口】日本は地理的にこんな国！ その６", ja: "一番高い山は富士山です", en: "The highest mountain is Mt. Fuji." },
+        { id: 822, context: "【Scene11-01 風土・人口】日本の気候はこんな感じ！ その１", ja: "春と秋はとても過ごしやすいです", en: "Spring and fall are very comfortable." },
+        { id: 823, context: "【Scene11-01 風土・人口】日本の気候はこんな感じ！ その２", ja: "日本の夏はとても蒸し暑いです", en: "Summer in Japan is very humid." },
+        { id: 824, context: "【Scene11-01 風土・人口】日本の人口くらいは答えられるようにしておきましょう。", ja: "日本の人口は１億３０００万人くらいです", en: "The population of Japan is about 130 million." },
+        { id: 825, context: "【Scene11-01 風土・人口】どこの国でもそうだと思いますが", ja: "人口は大都市に集中してます", en: "The population is concentrated in large cities." },
+
+        // --- Scene11-02 日本紹介（地方紹介） ---
+        { id: 826, context: "【Scene11-02 地方紹介】日本の長さくらいは知っておきましょう。", ja: "日本は南北に３０００キロ以上あります", en: "Japan is over 3000 kilometers long from north to south." },
+        { id: 827, context: "【Scene11-02 地方紹介】南北に長いものだから…", ja: "気候が地方によってちがいます", en: "The climate differs by region." },
+        { id: 828, context: "【Scene11-02 地方紹介】ローカルネタ 北海道編", ja: "北海道は梅雨がありません", en: "Hokkaido doesn't have a rainy season." },
+        { id: 829, context: "【Scene11-02 地方紹介】ローカルネタ 東北編", ja: "東北地方は夏が短くて冬が長いんです", en: "The Tohoku district has a short summer and a long winter." },
+        { id: 830, context: "【Scene11-02 地方紹介】ローカルネタ 新潟編", ja: "新潟はコメの生産で有名です", en: "Niigata is famous for its rice production." },
+        { id: 831, context: "【Scene11-02 地方紹介】ローカルネタ 東京編", ja: "東京は日本で一番大きな都市です", en: "Tokyo is the largest city in Japan." },
+        { id: 832, context: "【Scene11-02 地方紹介】ローカルネタ 大阪編", ja: "大阪は日本で二番目に大きな都市です", en: "Osaka is the second largest city in Japan." },
+        { id: 833, context: "【Scene11-02 地方紹介】ローカルネタ 京都編", ja: "京都には有名なお寺がたくさんあります", en: "There are many famous temples in Kyoto." },
+        { id: 834, context: "【Scene11-02 地方紹介】ローカルネタ 九州編", ja: "九州の梅雨は長いです", en: "Kyushu has a long rainy season." },
+        { id: 835, context: "【Scene11-02 地方紹介】ローカルネタ 沖縄編", ja: "沖縄は亜熱帯気候です", en: "Okinawa has a subtropical climate." },
+
+        // --- Scene11-03 日本語の文字について説明しよう ---
+        { id: 836, context: "【Scene11-03 文字の説明】日本語の文字について説明しよう その１", ja: "日本語は読み書きがむずかしいです", en: "Japanese is hard to read and write." },
+        { id: 837, context: "【Scene11-03 文字の説明】日本語の文字について説明しよう その２", ja: "日本語の書き方には３タイプあるんです", en: "There are three types of Japanese writing." },
+        { id: 838, context: "【Scene11-03 文字の説明】日本語の文字について説明しよう その３", ja: "漢字、ひらがな、カタカナです", en: "They are kanji, hiragana and katakana." },
+        { id: 839, context: "【Scene11-03 文字の説明】漢字ってどんなもの？ その１", ja: "漢字は中国から来ました", en: "Kanji came from China." },
+        { id: 840, context: "【Scene11-03 文字の説明】漢字ってどんなもの？ その２", ja: "漢字の文字は意味を持ってるんです", en: "Kanji characters have meanings." },
+        { id: 841, context: "【Scene11-03 文字の説明】漢字ってどんなもの？ その３", ja: "日本人にとっても、漢字をマスターするのは難しいんですよ", en: "Even for Japanese, mastering kanji is difficult." },
+        { id: 842, context: "【Scene11-03 文字の説明】ひらがなとカタカナについて その１", ja: "ひらがなとカタカナは、漢字を簡略化してできました", en: "Hiragana and katakana were created by simplifying kanji." },
+        { id: 843, context: "【Scene11-03 文字の説明】ひらがなとカタカナについて その２", ja: "カタカナは主に外来語に使われるんです", en: "Katakana is used mainly for foreign words." },
+        { id: 844, context: "【Scene11-03 文字の説明】たしかに、見た目は似ている部分も多いけど", ja: "日本語は中国語とは全然違うんですよ", en: "Japanese is very different from Chinese." },
+        { id: 845, context: "【Scene11-03 文字の説明】中国語と日本語とのちがいは", ja: "語順と発音が全くちがいます", en: "Word order and pronunciation are totally different." },
+
+        // --- Scene11-04 日本の伝統文化と現代文化 ---
+        { id: 846, context: "【Scene11-04 伝統と現代文化】日本の伝統文化を語ろう 生け花編 その１", ja: "生け花は日本式フラワーアレンジメントです", en: "Ikebana is the Japanese art of flower arrangement." },
+        { id: 847, context: "【Scene11-04 伝統と現代文化】日本の伝統文化を語ろう 生け花編 その２", ja: "生け花は芸術的で実用的な趣味です", en: "Ikebana is an artistic and practical hobby." },
+        { id: 848, context: "【Scene11-04 伝統と現代文化】日本の伝統文化を語ろう 茶道編 その１", ja: "茶道とは日本のお茶の儀式です", en: "Sado is the Japanese tea ceremony." },
+        { id: 849, context: "【Scene11-04 伝統と現代文化】日本の伝統文化を語ろう 茶道編 その２", ja: "茶道は礼儀作法を学ぶのにいいんです", en: "Sado is good for learning etiquette." },
+        { id: 850, context: "【Scene11-04 伝統と現代文化】日本の伝統文化を語ろう 茶道編 その３", ja: "茶道は女性に人気です", en: "Sado is popular among women." },
+        { id: 851, context: "【Scene11-04 伝統と現代文化】日本の伝統文化を語ろう 書道編 その１", ja: "書道は伝統芸術の一種です", en: "Shodo is a kind of traditional art." },
+        { id: 852, context: "【Scene11-04 伝統と現代文化】日本の伝統文化を語ろう 書道編 その２", ja: "特別な筆を使って日本の文字を書きます", en: "We write Japanese characters with a special brush." },
+        { id: 853, context: "【Scene11-04 伝統と現代文化】日本の現代文化を語ろう テレビゲーム編 その１", ja: "日本のテレビゲームは世界的に有名です", en: "Japanese video games are famous around the world." },
+        { id: 854, context: "【Scene11-04 伝統と現代文化】日本の現代文化を語ろう テレビゲーム編 その２", ja: "（それらは）日本の子供たちの間で一番人気のある遊びです", en: "They are the most popular pastime for Japanese children." },
+        { id: 855, context: "【Scene11-04 伝統と現代文化】日本の現代文化を語ろう マンガ・アニメ編 その１", ja: "たくさんの日本のアニメを、他の国々が輸入しています", en: "Many Japanese animations are imported by other countries." },
+        { id: 856, context: "【Scene11-04 伝統と現代文化】日本の現代文化を語ろう マンガ・アニメ編 その２", ja: "（それらは）子供だけじゃなく大人をも魅了します", en: "They attract not only children but also adults." },
+        { id: 857, context: "【Scene11-04 伝統と現代文化】日本の現代文化を語ろう マンガ・アニメ編 その３", ja: "通勤電車でマンガ雑誌をよむビジネスマンは多いです", en: "Many businessmen read comic magazines on the commuter trains." },
+
+        // --- Scene11-05 人気スポーツ（野球・サッカー・ゴルフ） ---
+        { id: 858, context: "【Scene11-05 人気スポーツ】日本で人気のあるスポーツといえば、やっぱり野球でしょう。", ja: "野球は日本ですごく人気があります", en: "Baseball is very popular in Japan." },
+        { id: 859, context: "【Scene11-05 人気スポーツ】日本のプロ野球を語ろう その１", ja: "セントラルリーグとパシフィックリーグというのがあります", en: "There is a Central League and a Pacific League." },
+        { id: 860, context: "【Scene11-05 人気スポーツ】日本のプロ野球を語ろう その２", ja: "それぞれのリーグに６チームあります", en: "Each league has six teams." },
+        { id: 861, context: "【Scene11-05 人気スポーツ】日本のプロ野球を語ろう その３", ja: "それぞれのリーグで一番のチームが日本シリーズで戦うんです", en: "The best team of each league competes in the Japan Series." },
+        { id: 862, context: "【Scene11-05 人気スポーツ】日本のプロ野球を語ろう その４", ja: "メジャーリーグに入団した選手もいます", en: "Some players have joined the Major League." },
+        { id: 863, context: "【Scene11-05 人気スポーツ】日本で人気のあるスポーツといえば、やっぱりサッカーでしょう。", ja: "サッカーの熱狂的なファンはたくさんいます", en: "There are many enthusiastic soccer fans." },
+        { id: 864, context: "【Scene11-05 人気スポーツ】日本のプロサッカーを語ろう その１", ja: "Ｊリーグは１９９３年に始まって、１６チームあります", en: "The J-League started in 1993 and has 16 teams." },
+        { id: 865, context: "【Scene11-05 人気スポーツ】日本のプロサッカーを語ろう その２", ja: "Ｊリーグには外国人選手もたくさんいます", en: "Many foreign players belong to the J-League." },
+        { id: 866, context: "【Scene11-05 人気スポーツ】日本のプロサッカーを語ろう その３", ja: "日本は２００２年に韓国とワールドカップを共催しました", en: "Japan co-hosted the World Cup with Korea in 2002." },
+        { id: 867, context: "【Scene11-05 人気スポーツ】日本のプロサッカーを語ろう その４", ja: "海外のプロサッカーチームに移籍した選手もいます", en: "Some players have joined foreign professional soccer teams." },
+        { id: 868, context: "【Scene11-05 人気スポーツ】娯楽としてだけでなく、ビジネスにも欠かせないスポーツといえばこれでしょう。", ja: "ゴルフは日本のビジネスパーソンに人気です", en: "Golf is popular among Japanese businesspeople." },
+        { id: 869, context: "【Scene11-05 人気スポーツ】ゴルフが多くのビジネスパーソンにとって大切な理由は", ja: "ゴルフはビジネス関係を深めるいい手段なんです", en: "Golf is a good way to promote business relationships." },
+
+        // --- Scene11-06 武道を語ろう（柔道・剣道・弓道） ---
+        { id: 870, context: "【Scene11-06 武道】日本の武道を語ろう 柔道編 その１", ja: "柔道は有名な日本の伝統的スポーツです", en: "Judo is a famous traditional Japanese sport." },
+        { id: 871, context: "【Scene11-06 武道】日本の武道を語ろう 柔道編 その２", ja: "小さい選手が敵を投げるのを観るとワクワクします", en: "It's exciting to see small wrestlers throw their opponents." },
+        { id: 872, context: "【Scene11-06 武道】日本の武道を語ろう 剣道編 その１", ja: "剣道はフェンシングに似ています", en: "Kendo is similar to fencing." },
+        { id: 873, context: "【Scene11-06 武道】日本の武道を語ろう 剣道編 その２", ja: "剣道は武士道精神を受け継いでるんです", en: "Kendo inherits the Samurai spirit." },
+        { id: 874, context: "【Scene11-06 武道】日本の武道を語ろう 剣道編 その３", ja: "剣道は竹の刀で行われます", en: "Kendo is practiced with a bamboo sword." },
+        { id: 875, context: "【Scene11-06 武道】日本の武道を語ろう 弓道編 その１", ja: "弓道はアーチェリーのようなものです", en: "Kyudo is a kind of archery." },
+        { id: 876, context: "【Scene11-06 武道】日本の武道を語ろう 弓道編 その２", ja: "的を狙うのにはものすごく集中力が要ります", en: "Aiming at the targets requires great concentration." },
+        { id: 877, context: "【Scene11-06 武道】武道とは、礼儀や作法も重んじるスポーツです。", ja: "武道の目的は肉体と精神を鍛えることなんです", en: "The purpose of martial arts is to train the body and soul." },
+
+        // --- Scene11-07 日本の国技、すもうについて ---
+        { id: 878, context: "【Scene11-07 すもう】外国人に最もよく知られている日本の伝統的スポーツです。", ja: "相撲は日本の国技です", en: "Sumo is the national sport of Japan." },
+        { id: 879, context: "【Scene11-07 すもう】すもう・力士について語ろう その１", ja: "力士は体重を増やそうと一生懸命です", en: "Sumo wrestlers try hard to gain weight." },
+        { id: 880, context: "【Scene11-07 すもう】すもう・力士について語ろう その２", ja: "力士は試合の前に土俵に塩をまきます", en: "Sumo wrestlers sprinkle salt in the ring before the match." },
+        { id: 881, context: "【Scene11-07 すもう】すもう・力士について語ろう その３", ja: "塩は土俵を清めるんです", en: "Salt purifies the ring." },
+        { id: 882, context: "【Scene11-07 すもう】すもう・力士について語ろう その４", ja: "外国人力士もいます", en: "There are some foreign sumo wrestlers." },
+        { id: 883, context: "【Scene11-07 すもう】すもう・力士について語ろう その５", ja: "横綱とは一番強い力士です", en: "Yokozunas are the strongest sumo wrestlers." },
+        { id: 884, context: "【Scene11-07 すもう】「まげ」について語ろう その１", ja: "力士は髪の毛をのばして結います", en: "Sumo wrestlers grow their hair long and tie it up." },
+        { id: 885, context: "【Scene11-07 すもう】「まげ」について語ろう その２", ja: "引退するとき髪の毛を切るのです", en: "They have their hair cut when they retire." },
+
+        // --- Scene11-08 日本人の食／麺類と天ぷら ---
+        { id: 886, context: "【Scene11-08 日本の食】日本人の食生活は？ その１", ja: "日本人の主食はコメです", en: "Most Japanese people eat rice everyday." },
+        { id: 887, context: "【Scene11-08 日本の食】日本人の食生活は？ その２", ja: "若者は朝食にパンを食べる人が多いんですけどね", en: "Many young people have bread as breakfast, though." },
+        { id: 888, context: "【Scene11-08 日本の食】日本人の食生活は？ その３", ja: "一般的に、子供は和食より洋食の方が好きです", en: "Generally, children prefer Western food to Japanese food." },
+        { id: 889, context: "【Scene11-08 日本の食】日本人の麺類の食べ方 その１", ja: "私たちは麺をたべるとき、ズズッと音を立ててすすります", en: "We slurp when we eat noodles." },
+        { id: 890, context: "【Scene11-08 日本の食】日本人の麺類の食べ方 その２", ja: "それは行儀が悪いとは思われてないんです", en: "It isn't considered impolite." },
+        { id: 891, context: "【Scene11-08 日本の食】日本人の麺類の食べ方 その３", ja: "食べ物をおいしく食べているというしるしなんです", en: "It's a sign that you like the food." },
+        { id: 892, context: "【Scene11-08 日本の食】天ぷらについて語ります その１", ja: "天ぷらは日本料理の中でも人気のある物のうちのひとつです", en: "Tempura is one of the most popular Japanese foods." },
+        { id: 893, context: "【Scene11-08 日本の食】天ぷらについて語ります その２", ja: "おいしい天ぷらのカギは衣なんです", en: "The batter is the key to delicious tempura." },
+        { id: 894, context: "【Scene11-08 日本の食】天ぷらについて語ります その３", ja: "小麦粉、卵、冷たい水をすばやく混ぜ合わせなくてはいけません", en: "The wheat flour, eggs and cold water should be mixed quickly." },
+        { id: 895, context: "【Scene11-08 日本の食】天ぷらについて語ります その４", ja: "そうすれば天ぷらがサクっとなるんです", en: "This will make the tempura come out crispy." },
+        { id: 896, context: "【Scene11-08 日本の食】天ぷらについて語ります その５", ja: "私はエビの天ぷらが一番好きです", en: "I like shrimp tempura the best." },
+
+        // --- Scene11-09 日本人の年末・年始 ---
+        { id: 897, context: "【Scene11-09 年末年始】「忘年会」について説明しよう その１", ja: "１２月にはたくさん忘年会があります", en: "We have so many bonenkai in December." },
+        { id: 898, context: "【Scene11-09 年末年始】「忘年会」について説明しよう その２", ja: "忘年会というのは、文字どおり去る年を忘れる会という意味です", en: "Bonenkai literally means forget-the-year party." },
+        { id: 899, context: "【Scene11-09 年末年始】「忘年会」について説明しよう その３", ja: "その年に起こった嫌な思い出を全部忘れてしまおうという会です", en: "It is a party for everyone to forget all the unpleasant memories of that year." },
+        { id: 900, context: "【Scene11-09 年末年始】大晦日の一般的な過ごし方 その１", ja: "大晦日にはそばを食べます", en: "We eat soba noodles on New Year's Eve." },
+        { id: 901, context: "【Scene11-09 年末年始】どうして大晦日にそばを食べるのかご存知ですか？", ja: "そばは長寿を表しているんです", en: "Soba noodles symbolize long life." },
+        { id: 902, context: "【Scene11-09 年末年始】大晦日の一般的な過ごし方 その２", ja: "テレビで特別番組を見る人が多いです", en: "Many people watch special programs on TV." },
+        { id: 903, context: "【Scene11-09 年末年始】日本人のお正月といえば その１", ja: "元旦には着物を着る女性が多いです", en: "Many women wear a kimono on New Year's Day." },
+        { id: 904, context: "【Scene11-09 年末年始】日本人のお正月といえば その２", ja: "おせちという特別な料理を食べます", en: "We eat special dishes called osechi." },
+        { id: 905, context: "【Scene11-09 年末年始】日本人のお正月といえば その３", ja: "子供たちは親戚からお年玉まというおこづかいをもらえます", en: "Children can get money called otoshidama from relatives." },
+        { id: 906, context: "【Scene11-09 年末年始】年賀状は、めったに会えなくなった人たちに近況報告ができる貴重な機会。", ja: "私たちは親戚、友人などに年賀状を送ります", en: "We send New Year's cards to relatives, friends, and so on." },
+
+        // --- Scene11-10 日本人のバレンタイン ---
+        { id: 907, context: "【Scene11-10 バレンタイン】日本のバレンタインデーを説明しよう その１", ja: "バレンタインは女性が愛を告白する日なんです", en: "Valentine's Day is a day when women confess their love." },
+        { id: 908, context: "【Scene11-10 バレンタイン】日本のバレンタインデーを説明しよう その２", ja: "女性が男性にチョコレートをあげます", en: "Women give men chocolate." },
+        { id: 909, context: "【Scene11-10 バレンタイン】日本のバレンタインデーを説明しよう その３", ja: "同僚や上司にチョコをあげる女性もいます", en: "Some women give chocolates to their colleagues and bosses." },
+        { id: 910, context: "【Scene11-10 バレンタイン】日本のバレンタインデーを説明しよう その４", ja: "人気の歌手やスポーツ選手はたくさんのチョコをもらいます", en: "Popular singers and athletes get many chocolates." },
+        { id: 911, context: "【Scene11-10 バレンタイン】ついでにホワイトデーも説明しよう その１", ja: "３月１４日はホワイトデーです", en: "March 14th is called White Day." },
+        { id: 912, context: "【Scene11-10 バレンタイン】ついでにホワイトデーも説明しよう その２", ja: "男性が女性にお返しのプレゼントをするんです", en: "Men give women gifts in return." },
+        { id: 913, context: "【Scene11-10 バレンタイン】もとはチョコレート会社の戦略だというウワサもあるけど", ja: "いつ、どうしてこんな習慣が始まったのかはわからないなあ", en: "I don't know when and why such a custom started." },
+
+        // --- Scene12-01 滞在最終日～空港へ ---
+        { id: 926, context: "【Scene12-01 最終日・空港へ】滞在最終日。ホテルの部屋でしみじみと", ja: "時間が経つのは早いね", en: "Time flies quickly." },
+        { id: 927, context: "【Scene12-01 最終日・空港へ】航空会社によっては必要なところがあるので、忘れないように。", ja: "フライトのリコンファームをしたいのですが", en: "I'd like to reconfirm my flight." },
+        { id: 928, context: "【Scene12-01 最終日・空港へ】どうしても帰りたくなくなってしまったら、フライトをキャンセルします。", ja: "予約をキャンセルしたいのですが", en: "I'd like to cancel my reservation." },
+        { id: 929, context: "【Scene12-01 最終日・空港へ】やむを得ない理由で帰国便の日程を変更したいときは", ja: "予約を変更したいのですが", en: "I'd like to change my reservation." },
+        { id: 930, context: "【Scene12-01 最終日・空港へ】フライトの日程を変えてもらいたいときは、このように言います。", ja: "３月２４日の同じ便に乗りたいのですが", en: "I'd like to take the same flight on March 24th." },
+        { id: 931, context: "【Scene12-01 最終日・空港へ】急な仕事が入って、一刻も早く帰らなければならなくなったら", ja: "もっと早い便はないでしょうか？", en: "Isn't there an earlier flight?" },
+        { id: 932, context: "【Scene12-01 最終日・空港へ】帰国当日。タクシーにて空港へ向かいます。", ja: "空港お願いします", en: "Airport, please." },
+        { id: 933, context: "【Scene12-01 最終日・空港へ】寝坊してしまい、時間の余裕がまったくない！というときは", ja: "できるだけ早くお願いします", en: "As fast as possible." },
+        { id: 934, context: "【Scene12-01 最終日・空港へ】ドライバーに事情を伝えて、なんとか間に合わせてもらいます。", ja: "私たち６時までに空港に行かなくちゃいけないんです", en: "We have to get to the airport by six o'clock." },
+
+        // --- Scene12-02 搭乗手続き～免税手続き ---
+        { id: 935, context: "【Scene12-02 搭乗・免税手続】搭乗手続きは余裕をもって済ませましょう。", ja: "搭乗手続きをしたいのですが", en: "I'd like to check in." },
+        { id: 936, context: "【Scene12-02 搭乗・免税手続】カウンターにて、希望の席を聞かれます。", ja: "窓側の席と通路側の席のどちらがいいですか？", en: "Would you like a window seat or an aisle seat?" },
+        { id: 937, context: "【Scene12-02 搭乗・免税手続】ひととおり手続きが終わったら、このように聞かれます。", ja: "何かお預かりする荷物はありますか？", en: "Do you have any bags to check?" },
+        { id: 938, context: "【Scene12-02 搭乗・免税手続】念のため搭乗開始時刻を聞いておきます。", ja: "搭乗開始時刻は何時ですか？", en: "What's the boarding time?" },
+        { id: 939, context: "【Scene12-02 搭乗・免税手続】せっかく撮った写真をパーにしたくないので", ja: "この機械にフィルムを通しても大丈夫ですか？", en: "Is this machine film-safe?" },
+        { id: 940, context: "【Scene12-02 搭乗・免税手続】忘れずに免税手続きを済ませておきましょう。", ja: "免税手続きはどこで申し込めますか？", en: "I'd like to apply for the tax refund." },
+        { id: 941, context: "【Scene12-02 搭乗・免税手続】免税の範囲内なのかわからないときは、申告しておきましょう。", ja: "ワイン１本とタバコが１カートンあります", en: "I have a bottle of wine and a carton of cigarettes." },
+
+        // --- Scene12-03 搭乗までお買い物～テイクオフ！ ---
+        { id: 942, context: "【Scene12-03 搭乗・離陸】あやしげな露店で買ったのと同じ物が、空港で半額で売られていました。", ja: "ぼったくられちゃった", en: "I got ripped off." },
+        { id: 943, context: "【Scene12-03 搭乗・離陸】どうせどこにでもあるでしょ、と思って買わなかったあのぬいぐるみ…", ja: "あのとき買っておけばよかった", en: "I should have bought it at that time." },
+        { id: 944, context: "【Scene12-03 搭乗・離陸】たくさん買ったと思っていたけど、自分へのおみやげがほとんどでした。", ja: "おみやげ足りるかなあ", en: "I wonder if I bought enough souvenirs." },
+        { id: 945, context: "【Scene12-03 搭乗・離陸】お金の計算がめんどくさくて、お札ばかり使っていたら", ja: "いっぱい小銭が残っちゃったよ", en: "I have a lot of small change left over." },
+        { id: 946, context: "【Scene12-03 搭乗・離陸】計画的で計算の得意な友人いわく", ja: "僕は全部小銭を使いきれたよ", en: "I spent all my small change." },
+        { id: 947, context: "【Scene12-03 搭乗・離陸】海外旅行したときは、いつも小銭をとっておきます。", ja: "コインをいくつかおみやげに持って帰ろうっと", en: "I'll take some coins home as a souvenir." },
+        { id: 948, context: "【Scene12-03 搭乗・離陸】たいてい空港内に表示がありますが、迷ってしまったら", ja: "ゲート２０番はどこかご存知ですか？", en: "Do you know where Gate 20 is?" },
+        { id: 949, context: "【Scene12-03 搭乗・離陸】帰り際にいつも思うことは", ja: "もっといたいなあ", en: "I wish I could stay longer." },
+        { id: 950, context: "【Scene12-03 搭乗・離陸】帰国便の中で友人と誓い合います。", ja: "またここへ戻ってこようね！", en: "Let's come back here again!" }
+    ];
+</script>
+<script src="app-player.js"></script>
+</body>
+</html>
