@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02 店員さんに希望を伝えよう</title>
+    <!-- 共通スタイルシートの読み込み -->
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+<div class="container">
+    <h1>👕 02 店員さんに希望を伝えよう</h1>
+    <div class="nav-links">
+        <a href="Scene06-01.html">← [Back] 01 店員とのコミュニケーション</a>
+        <a href="index.html">🏠 TOP（目次）</a>
+        <a href="Scene06-03.html">03 試着してみよう ➔</a>
+    </div>
+    <div class="settings-panel">
+        <div class="setting-row">
+            <span class="setting-label">🗣️ 英語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-en"></select>
+                <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🇯🇵 日本語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-ja"></select>
+                <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="speed-control">
+                <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
+                <span id="speed-label" class="speed-val">0.80x</span>
+            </div>
+        </div>
+        <div class="all-play-container">
+            <button class="btn-play-all" id="btn-toggle-all">
+                <span id="all-btn-icon">▶️</span>
+                <span id="all-btn-text">全問を最初から連続再生</span>
+            </button>
+            <span id="all-play-status" class="play-all-status">全11問 停止中</span>
+        </div>
+    </div>
+    <div id="phrases-list"></div>
+</div>
+<script>
+    const data = [
+            {
+                    "id": 465,
+                    "context": "手の届かない場所に飾ってあるアイテムを見せてもらいたいときは、指をさしつつ",
+                    "ja": "あれを見せてもらえますか？",
+                    "en": "Could you show me that one?"
+            },
+            {
+                    "id": 466,
+                    "context": "ストリートを歩いていたら、店先のジャケットに一目惚れ。",
+                    "ja": "ショーウィンドウにあるジャケットを見せていただけますか？",
+                    "en": "Could you show me the jacket in the window?"
+            },
+            {
+                    "id": 467,
+                    "context": "デザインが気に入ったら、色違いはないか聞いてみましょう。",
+                    "ja": "これの色違いはありますか？",
+                    "en": "Do you have this in other colors?"
+            },
+            {
+                    "id": 468,
+                    "context": "体のラインに沿っていて、コンパクトで動きやすいような…",
+                    "ja": "ぴったりしたジャケットがほしいんですけど",
+                    "en": "I'd like a fitted jacket."
+            },
+            {
+                    "id": 469,
+                    "context": "これもすごくステキだけれど、念のため。",
+                    "ja": "他のも見てみたいです",
+                    "en": "I'd like to see some others."
+            },
+            {
+                    "id": 470,
+                    "context": "ぶかぶかな感じがかわいらしい",
+                    "ja": "ゆったりしたセーターを探しているんです",
+                    "en": "I'm looking for a loose sweater."
+            },
+            {
+                    "id": 471,
+                    "context": "要望をさらに細かく伝えよう　その１",
+                    "ja": "ジーンズに合うような…",
+                    "en": "Something that looks nice with jeans."
+            },
+            {
+                    "id": 472,
+                    "context": "要望をさらに細かく伝えよう　その２",
+                    "ja": "カジュアル過ぎず、かといってフォーマル過ぎない物",
+                    "en": "Something not too casual but not too formal."
+            },
+            {
+                    "id": 473,
+                    "context": "あらかじめ予算を伝えておくと話が早いかもしれません。",
+                    "ja": "６０ドルくらいのバッグを探しているのですが",
+                    "en": "I'm looking for a bag for around sixty dollars."
+            },
+            {
+                    "id": 474,
+                    "context": "スニーカーでは入れないレストランへ行きたいときは",
+                    "ja": "上品な感じの靴を探しているのですが",
+                    "en": "I'm looking for some smart shoes."
+            },
+            {
+                    "id": 475,
+                    "context": "ちょっと手の届かない高価な商品をすすめられたら",
+                    "ja": "もう少しお手ごろなのはありますか？",
+                    "en": "Do you have anything more reasonable?"
+            }
+    ];
+</script>
+<script src="app-player.js"></script>
+</body>
+</html>

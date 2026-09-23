@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>07 値引きに挑戦！</title>
+    <!-- 共通スタイルシートの読み込み -->
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+<div class="container">
+    <h1>🏷️ 07 値引きに挑戦！</h1>
+    <div class="nav-links">
+        <a href="Scene06-06.html">← [Back] 06 Pottery（陶器）を買ってみよう</a>
+        <a href="index.html">🏠 TOP（目次）</a>
+        <a href="Scene06-08.html">08 買うものが決まったらお会計 ➔</a>
+    </div>
+    <div class="settings-panel">
+        <div class="setting-row">
+            <span class="setting-label">🗣️ 英語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-en"></select>
+                <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🇯🇵 日本語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-ja"></select>
+                <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="speed-control">
+                <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
+                <span id="speed-label" class="speed-val">0.80x</span>
+            </div>
+        </div>
+        <div class="all-play-container">
+            <button class="btn-play-all" id="btn-toggle-all">
+                <span id="all-btn-icon">▶️</span>
+                <span id="all-btn-text">全問を最初から連続再生</span>
+            </button>
+            <span id="all-play-status" class="play-all-status">全11問 停止中</span>
+        </div>
+    </div>
+    <div id="phrases-list"></div>
+</div>
+<script>
+    const data = [
+            {
+                    "id": 517,
+                    "context": "びっくりするような値段をふっかけられたら",
+                    "ja": "高すぎます！",
+                    "en": "It's too expensive!"
+            },
+            {
+                    "id": 518,
+                    "context": "ダメもとで値引きに挑戦してみましょう。",
+                    "ja": "値引きしていただけませんか？",
+                    "en": "Could you give me a discount?"
+            },
+            {
+                    "id": 519,
+                    "context": "バーゲン品を値引きしようとすると、こう言われてしまうかも。",
+                    "ja": "値引きをしてこの値段です",
+                    "en": "This is a discount price."
+            },
+            {
+                    "id": 520,
+                    "context": "あまりしつこくすすめられてしまったら",
+                    "ja": "値引きしていただけるなら買いますよ",
+                    "en": "I'll take it if you can give me a discount."
+            },
+            {
+                    "id": 521,
+                    "context": "はじめに予算を宣言してしまうのもいいかも知れません。",
+                    "ja": "予算は５０ドルまでなんです",
+                    "en": "My budget is up to fifty dollars."
+            },
+            {
+                    "id": 522,
+                    "context": "値引きフレーズの切り札です。",
+                    "ja": "今４０ドルしか持っていないんです",
+                    "en": "I only have forty dollars now."
+            },
+            {
+                    "id": 523,
+                    "context": "こういう取引をもちかけるのも有効です。",
+                    "ja": "２つで６０ドルではどうですか？",
+                    "en": "How about sixty dollars for two?"
+            },
+            {
+                    "id": 524,
+                    "context": "相手がこう言ってくれれば値引き交渉成功です。",
+                    "ja": "オーケー、６０ドルにしましょう",
+                    "en": "OK, I'll make it sixty dollars."
+            },
+            {
+                    "id": 525,
+                    "context": "納得のいく価格に落ち着いたら",
+                    "ja": "交渉成立のようですね",
+                    "en": "I think we have a deal."
+            },
+            {
+                    "id": 526,
+                    "context": "税率が高い国もあるので要注意。",
+                    "ja": "税込みですか？",
+                    "en": "Is tax included?"
+            },
+            {
+                    "id": 527,
+                    "context": "レジに持っていく前に確認してみましょう。",
+                    "ja": "全部でいくらですか？",
+                    "en": "How much is it altogether?"
+            }
+    ];
+</script>
+<script src="app-player.js"></script>
+</body>
+</html>

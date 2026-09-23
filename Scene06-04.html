@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04 サイズが大きすぎたら、お直しを</title>
+    <!-- 共通スタイルシートの読み込み -->
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+<div class="container">
+    <h1>✂️ 04 サイズが大きすぎたら、お直しを</h1>
+    <div class="nav-links">
+        <a href="Scene06-03.html">← [Back] 03 試着してみよう</a>
+        <a href="index.html">🏠 TOP（目次）</a>
+        <a href="Scene06-05.html">05 おみやげを買おう ➔</a>
+    </div>
+    <div class="settings-panel">
+        <div class="setting-row">
+            <span class="setting-label">🗣️ 英語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-en"></select>
+                <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🇯🇵 日本語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-ja"></select>
+                <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="speed-control">
+                <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
+                <span id="speed-label" class="speed-val">0.80x</span>
+            </div>
+        </div>
+        <div class="all-play-container">
+            <button class="btn-play-all" id="btn-toggle-all">
+                <span id="all-btn-icon">▶️</span>
+                <span id="all-btn-text">全問を最初から連続再生</span>
+            </button>
+            <span id="all-play-status" class="play-all-status">全12問 停止中</span>
+        </div>
+    </div>
+    <div id="phrases-list"></div>
+</div>
+<script>
+    const data = [
+            {
+                    "id": 486,
+                    "context": "店員さんは「お似合いですよ」と言うけれど、どう見ても…",
+                    "ja": "これは私には大きすぎます",
+                    "en": "This is too large for me."
+            },
+            {
+                    "id": 487,
+                    "context": "気に入った服のサイズが大きすぎるときは",
+                    "ja": "もっと小さいのはありますか？",
+                    "en": "Do you have anything smaller?"
+            },
+            {
+                    "id": 488,
+                    "context": "自分のサイズがわからないときは、測ってもらいましょう。",
+                    "ja": "サイズを測っていただけますか？",
+                    "en": "Could you measure my size?"
+            },
+            {
+                    "id": 489,
+                    "context": "気に入った服のサイズが合わないときも、すぐにあきらめることはありません。",
+                    "ja": "お直しできますか？",
+                    "en": "Do you do alterations?"
+            },
+            {
+                    "id": 490,
+                    "context": "お直し依頼　丈が長すぎるとき",
+                    "ja": "丈を直していただけますか？",
+                    "en": "Could you adjust the length?"
+            },
+            {
+                    "id": 491,
+                    "context": "お直し依頼　袖やすそを指差しながら",
+                    "ja": "この部分を短くしてください",
+                    "en": "Please make this part shorter."
+            },
+            {
+                    "id": 492,
+                    "context": "お直し依頼　ウエストがゆるすぎるとき",
+                    "ja": "ウエストをつめてください",
+                    "en": "Please take in the waist."
+            },
+            {
+                    "id": 493,
+                    "context": "お直しにかかる値段を聞いてみます。",
+                    "ja": "それにはいくらかかりますか？",
+                    "en": "How much do you charge for it?"
+            },
+            {
+                    "id": 494,
+                    "context": "できればその日のうちに持って帰りたいものです。",
+                    "ja": "すぐに直していただけますか？",
+                    "en": "Could you adjust it right now?"
+            },
+            {
+                    "id": 495,
+                    "context": "いつ仕上がるのか聞いてみよう　その１",
+                    "ja": "どれくらいかかりますか？",
+                    "en": "How long will it take?"
+            },
+            {
+                    "id": 496,
+                    "context": "いつ仕上がるのか聞いてみよう　その２",
+                    "ja": "いつ取りに来たらいいですか？",
+                    "en": "When can I pick it up?"
+            },
+            {
+                    "id": 497,
+                    "context": "帰国まで日数が限られているときは、受け取り希望日を伝えます。",
+                    "ja": "今週末までに欲しいのですが",
+                    "en": "I'd like to have it by the end of this week."
+            }
+    ];
+</script>
+<script src="app-player.js"></script>
+</body>
+</html>

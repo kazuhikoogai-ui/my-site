@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>08 買うものが決まったらお会計</title>
+    <!-- 共通スタイルシートの読み込み -->
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+<div class="container">
+    <h1>💳 08 買うものが決まったらお会計</h1>
+    <div class="nav-links">
+        <a href="Scene06-07.html">← [Back] 07 値引きに挑戦！</a>
+        <a href="index.html">🏠 TOP（目次）</a>
+        <a href="Scene06-09.html">09 プレゼント用の品物は… ➔</a>
+    </div>
+    <div class="settings-panel">
+        <div class="setting-row">
+            <span class="setting-label">🗣️ 英語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-en"></select>
+                <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🇯🇵 日本語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-ja"></select>
+                <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="speed-control">
+                <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
+                <span id="speed-label" class="speed-val">0.80x</span>
+            </div>
+        </div>
+        <div class="all-play-container">
+            <button class="btn-play-all" id="btn-toggle-all">
+                <span id="all-btn-icon">▶️</span>
+                <span id="all-btn-text">全問を最初から連続再生</span>
+            </button>
+            <span id="all-play-status" class="play-all-status">全9問 停止中</span>
+        </div>
+    </div>
+    <div id="phrases-list"></div>
+</div>
+<script>
+    const data = [
+            {
+                    "id": 528,
+                    "context": "買うものが決まったら…",
+                    "ja": "これ下さい",
+                    "en": "I'll take this."
+            },
+            {
+                    "id": 529,
+                    "context": "支払方法はこのように聞かれます。",
+                    "ja": "現金ですか、カードですか？",
+                    "en": "Cash or charge?"
+            },
+            {
+                    "id": 530,
+                    "context": "日本円が使える国もあるのです。",
+                    "ja": "日本円は使えますか？",
+                    "en": "Do you take Japanese yen?"
+            },
+            {
+                    "id": 531,
+                    "context": "国によっては、使えるカードがかなり制限されるので注意しましょう。",
+                    "ja": "ビザカードは使えますか？",
+                    "en": "Do you take Visa?"
+            },
+            {
+                    "id": 532,
+                    "context": "お高い買い物をしてしまったら",
+                    "ja": "分割払いはできますか？",
+                    "en": "Can I pay in installments?"
+            },
+            {
+                    "id": 533,
+                    "context": "もらったおつりが少なかったら",
+                    "ja": "おつりが間違っているようです",
+                    "en": "I think you gave me the wrong change."
+            },
+            {
+                    "id": 534,
+                    "context": "冷静に、かつ威厳を持って説明しましょう。",
+                    "ja": "５０ドル札を２枚渡しましたよ",
+                    "en": "I gave you two 50 dollar bills."
+            },
+            {
+                    "id": 535,
+                    "context": "もらったおつりが多かったら、やっぱり良心が痛むので",
+                    "ja": "多すぎるようですが",
+                    "en": "I think it's too much."
+            },
+            {
+                    "id": 536,
+                    "context": "クレジットカードの請求額には目を光らせておきましょう。",
+                    "ja": "値札と金額が違います",
+                    "en": "This isn't the same amount as the price tag."
+            }
+    ];
+</script>
+<script src="app-player.js"></script>
+</body>
+</html>

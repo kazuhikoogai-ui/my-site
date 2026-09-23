@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>06 Pottery（陶器）を買ってみよう</title>
+    <!-- 共通スタイルシートの読み込み -->
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+<div class="container">
+    <h1>🏺 06 Pottery（陶器）を買ってみよう</h1>
+    <div class="nav-links">
+        <a href="Scene06-05.html">← [Back] 05 おみやげを買おう</a>
+        <a href="index.html">🏠 TOP（目次）</a>
+        <a href="Scene06-07.html">07 値引きに挑戦！ ➔</a>
+    </div>
+    <div class="settings-panel">
+        <div class="setting-row">
+            <span class="setting-label">🗣️ 英語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-en"></select>
+                <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🇯🇵 日本語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-ja"></select>
+                <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="speed-control">
+                <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
+                <span id="speed-label" class="speed-val">0.80x</span>
+            </div>
+        </div>
+        <div class="all-play-container">
+            <button class="btn-play-all" id="btn-toggle-all">
+                <span id="all-btn-icon">▶️</span>
+                <span id="all-btn-text">全問を最初から連続再生</span>
+            </button>
+            <span id="all-play-status" class="play-all-status">全11問 停止中</span>
+        </div>
+    </div>
+    <div id="phrases-list"></div>
+</div>
+<script>
+    const data = [
+            {
+                    "id": 506,
+                    "context": "きちんと並べられている陶器の数々を",
+                    "ja": "手に取ってもいいですか？",
+                    "en": "Can I pick it up?"
+            },
+            {
+                    "id": 507,
+                    "context": "材質が何かわからないときは",
+                    "ja": "これは何でできてるんですか？",
+                    "en": "What is this made of?"
+            },
+            {
+                    "id": 508,
+                    "context": "ここでしか手に入らない限定柄発見！",
+                    "ja": "このカップ＆ソーサーはいいおみやげになるわ",
+                    "en": "This cup and saucer make a good souvenir."
+            },
+            {
+                    "id": 509,
+                    "context": "思わず壷なんて買ってしまったけど",
+                    "ja": "かさばりそうだね",
+                    "en": "It seems to take up so much space."
+            },
+            {
+                    "id": 510,
+                    "context": "スーツケースに入りきらないほどお買い物してしまったので",
+                    "ja": "日本に送っていただけますか？",
+                    "en": "Could you send it to Japan?"
+            },
+            {
+                    "id": 511,
+                    "context": "送料を聞いてみます。",
+                    "ja": "送料はいくらですか？",
+                    "en": "How much is the shipping?"
+            },
+            {
+                    "id": 512,
+                    "context": "せっかく安く買い物できたのに",
+                    "ja": "送料が中身よりだいぶ高いですね",
+                    "en": "The shipping cost is far more expensive than the contents."
+            },
+            {
+                    "id": 513,
+                    "context": "お店の人いわく",
+                    "ja": "割れ物なので送料が高いんです",
+                    "en": "The shipping is expensive because it's fragile."
+            },
+            {
+                    "id": 514,
+                    "context": "高い送料を払うくらいなら",
+                    "ja": "自分で持って帰ります",
+                    "en": "I'll bring it home with me."
+            },
+            {
+                    "id": 515,
+                    "context": "気がつくとすっかり日が落ちていました。",
+                    "ja": "何時に閉店しますか？",
+                    "en": "What time do you close?"
+            },
+            {
+                    "id": 516,
+                    "context": "閉店時間をとっくにすぎていることを知って",
+                    "ja": "ここを長く開けてくれてありがとう",
+                    "en": "Thank you for staying open longer."
+            }
+    ];
+</script>
+<script src="app-player.js"></script>
+</body>
+</html>

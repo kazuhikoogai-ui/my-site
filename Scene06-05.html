@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05 おみやげを買おう</title>
+    <!-- 共通スタイルシートの読み込み -->
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+<div class="container">
+    <h1>🎁 05 おみやげを買おう</h1>
+    <div class="nav-links">
+        <a href="Scene06-04.html">← [Back] 04 サイズが大きすぎたら、お直しを</a>
+        <a href="index.html">🏠 TOP（目次）</a>
+        <a href="Scene06-06.html">06 Pottery（陶器）を買ってみよう ➔</a>
+    </div>
+    <div class="settings-panel">
+        <div class="setting-row">
+            <span class="setting-label">🗣️ 英語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-en"></select>
+                <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🇯🇵 日本語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-ja"></select>
+                <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="speed-control">
+                <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
+                <span id="speed-label" class="speed-val">0.80x</span>
+            </div>
+        </div>
+        <div class="all-play-container">
+            <button class="btn-play-all" id="btn-toggle-all">
+                <span id="all-btn-icon">▶️</span>
+                <span id="all-btn-text">全問を最初から連続再生</span>
+            </button>
+            <span id="all-play-status" class="play-all-status">全8問 停止中</span>
+        </div>
+    </div>
+    <div id="phrases-list"></div>
+</div>
+<script>
+    const data = [
+            {
+                    "id": 498,
+                    "context": "免税店の場所を聞いてみましょう。",
+                    "ja": "免税店がどこにあるかご存知ですか？",
+                    "en": "Do you know where the duty-free shop is?"
+            },
+            {
+                    "id": 499,
+                    "context": "免税店では忘れずに書類をもらいましょう。",
+                    "ja": "免税の手続き書類をいただけますか？",
+                    "en": "May I have a tax refund form?"
+            },
+            {
+                    "id": 500,
+                    "context": "アンティークのお店があればのぞいてみたいなあ、と思ったら",
+                    "ja": "この辺にアンティークのお店はありますか？",
+                    "en": "Are there any antique shops around here?"
+            },
+            {
+                    "id": 501,
+                    "context": "窓もドアもしめ切った、うす暗いお店発見。",
+                    "ja": "このお店あやしい",
+                    "en": "This shop looks seedy."
+            },
+            {
+                    "id": 502,
+                    "context": "開店しているのかよくわからないときは、お店の人に聞いてみましょう。",
+                    "ja": "今開いてますか？",
+                    "en": "Are you open now?"
+            },
+            {
+                    "id": 503,
+                    "context": "この土地ならではのおみやげはないか聞いてみましょう。",
+                    "ja": "この町のおみやげにはどんなのがありますか？",
+                    "en": "What kind of souvenirs are there in this town?"
+            },
+            {
+                    "id": 504,
+                    "context": "おみやげに迷ったら、こんな風に聞いてみるのもいいでしょう。",
+                    "ja": "どのおみやげが一番人気ですか？",
+                    "en": "Which souvenirs are most popular?"
+            },
+            {
+                    "id": 505,
+                    "context": "アメリカみやげに"Made in China（中国製）"なんて書かれていたらせつないので",
+                    "ja": "アメリカ製の物が欲しいのですが",
+                    "en": "I'd like something made in America."
+            }
+    ];
+</script>
+<script src="app-player.js"></script>
+</body>
+</html>

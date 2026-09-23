@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>09 プレゼント用の品物は…</title>
+    <!-- 共通スタイルシートの読み込み -->
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+<div class="container">
+    <h1>🎀 09 プレゼント用の品物は…</h1>
+    <div class="nav-links">
+        <a href="Scene06-08.html">← [Back] 08 買うものが決まったらお会計</a>
+        <a href="index.html">🏠 TOP（目次）</a>
+        <a href="Scene06-10.html">10 クレーム・交換・返品する ➔</a>
+    </div>
+    <div class="settings-panel">
+        <div class="setting-row">
+            <span class="setting-label">🗣️ 英語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-en"></select>
+                <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🇯🇵 日本語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-ja"></select>
+                <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🐢 再生速度 🐇</span>
+            <div class="speed-control">
+                <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
+                <span id="speed-label" class="speed-val">0.80x</span>
+            </div>
+        </div>
+        <div class="all-play-container">
+            <button class="btn-play-all" id="btn-toggle-all">
+                <span id="all-btn-icon">▶️</span>
+                <span id="all-btn-text">全問を最初から連続再生</span>
+            </button>
+            <span id="all-play-status" class="play-all-status">全7問 停止中</span>
+        </div>
+    </div>
+    <div id="phrases-list"></div>
+</div>
+<script>
+    const data = [
+            {
+                    "id": 537,
+                    "context": "友人にプレゼントを買おう　その１",
+                    "ja": "プレゼント用に包んでもらえますか？",
+                    "en": "Could you gift-wrap this?"
+            },
+            {
+                    "id": 538,
+                    "context": "友人にプレゼントを買おう　その２",
+                    "ja": "中にこのカードを入れたいのですが",
+                    "en": "Could you put this card inside?"
+            },
+            {
+                    "id": 539,
+                    "context": "友人にプレゼントを買おう　その３",
+                    "ja": "値札を外していただけますか？",
+                    "en": "Could you take off the price tag?"
+            },
+            {
+                    "id": 540,
+                    "context": "友人達へのおみやげを、自分で個別にラッピングするなら",
+                    "ja": "一緒に包んでください",
+                    "en": "Please wrap them together."
+            },
+            {
+                    "id": 541,
+                    "context": "友人達へのおみやげを、そのまま渡すだけにしたいなら　その１",
+                    "ja": "別々に包んでいただけますか？",
+                    "en": "Could you wrap them separately?"
+            },
+            {
+                    "id": 542,
+                    "context": "友人達へのおみやげを、そのまま渡すだけにしたいなら　その２",
+                    "ja": "別々の袋に入れていただけますか？",
+                    "en": "Could you put them in separate bags?"
+            },
+            {
+                    "id": 543,
+                    "context": "友人達へのおみやげを、ひとまとめに包装されてしまったら",
+                    "ja": "小さい袋を品物の個数分いただけますか？",
+                    "en": "Could you give me one small bag for each item?"
+            }
+    ];
+</script>
+<script src="app-player.js"></script>
+</body>
+</html>

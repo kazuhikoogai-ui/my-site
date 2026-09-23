@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01 店員とのコミュニケーション・フレーズ集</title>
+    <!-- 共通スタイルシートの読み込み -->
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+<div class="container">
+    <h1>🛍️ 01 店員とのコミュニケーション・フレーズ集</h1>
+    <div class="nav-links">
+        <a href="index.html">🏠 TOP（目次）</a>
+        <a href="Scene06-02.html">02 店員さんに希望を伝えよう ➔</a>
+    </div>
+    <div class="settings-panel">
+        <div class="setting-row">
+            <span class="setting-label">🗣️ 英語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-en"></select>
+                <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">🇯🇵 日本語の音声</span>
+            <div class="voice-controls">
+                <select id="voice-select-ja"></select>
+                <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
+            </div>
+        </div>
+        <div class="speed-control">
+                <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
+                <span id="speed-label" class="speed-val">0.80x</span>
+            </div>
+        </div>
+        <div class="all-play-container">
+            <button class="btn-play-all" id="btn-toggle-all">
+                <span id="all-btn-icon">▶️</span>
+                <span id="all-btn-text">全問を最初から連続再生</span>
+            </button>
+            <span id="all-play-status" class="play-all-status">全12問 停止中</span>
+        </div>
+    </div>
+    <div id="phrases-list"></div>
+</div>
+<script>
+    const data = [
+            {
+                    "id": 453,
+                    "context": "お店に入ると、店員さんが声をかけてきます。",
+                    "ja": "何かお探しですか？",
+                    "en": "May I help you?"
+            },
+            {
+                    "id": 454,
+                    "context": "すこし失礼かもしれませんが",
+                    "ja": "見ているだけなんです、ありがとう",
+                    "en": "I'm just looking, thanks."
+            },
+            {
+                    "id": 455,
+                    "context": "とりあえず当分放っておいてほしいとき　その１",
+                    "ja": "あとでお願いします",
+                    "en": "Maybe later, thanks."
+            },
+            {
+                    "id": 456,
+                    "context": "とりあえず当分放っておいてほしいとき　その２",
+                    "ja": "まずは見てまわりたいです",
+                    "en": "I'd like to look around first."
+            },
+            {
+                    "id": 457,
+                    "context": "商品を前にして決断に踏み切れないとき　その１",
+                    "ja": "ちょっと考えます",
+                    "en": "I'll think about it."
+            },
+            {
+                    "id": 458,
+                    "context": "商品を前にして決断に踏み切れないとき　その２",
+                    "ja": "よく考えさせてください",
+                    "en": "Let me think it over."
+            },
+            {
+                    "id": 459,
+                    "context": "商品を前にして決断に踏み切れないとき　その３",
+                    "ja": "まだ決められません",
+                    "en": "I can't make up my mind yet."
+            },
+            {
+                    "id": 460,
+                    "context": "店員さんにすすめてもらった物がイマイチだったとき　その１",
+                    "ja": "他のをさがしてみます、ありがとう",
+                    "en": "I'll look for something else, thank you."
+            },
+            {
+                    "id": 461,
+                    "context": "店員さんにすすめてもらった物がイマイチだったとき　その２",
+                    "ja": "今回はやめておきます、ありがとう",
+                    "en": "I'll pass this time, thank you."
+            },
+            {
+                    "id": 462,
+                    "context": "買いたいのにお金が足りないときは",
+                    "ja": "今持ち合わせがありません",
+                    "en": "I don't have enough money with me now."
+            },
+            {
+                    "id": 463,
+                    "context": "お金が足りないけどどうしても欲しいときは",
+                    "ja": "このジャケットを取っておいていただけますか？",
+                    "en": "Could you hold this jacket for me?"
+            },
+            {
+                    "id": 464,
+                    "context": "トイレに行きたいのに見当たらないときは",
+                    "ja": "この辺りにお手洗いはありますか？",
+                    "en": "Is there a rest room around here?"
+            }
+    ];
+</script>
+<script src="app-player.js"></script>
+</body>
+</html>
