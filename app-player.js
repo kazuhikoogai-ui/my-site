@@ -12,6 +12,7 @@ let englishVoices = [];
 let japaneseVoices = [];
 let isAllPlaying = false;
 let sequenceTimer = null;
+let currentPlayingIndex = 0; // 現在（または一時停止中）のカード番号を保持
 
 function populateVoiceList() {
     if (!('speechSynthesis' in window)) return;
@@ -91,8 +92,21 @@ function highlightCard(index) {
     }
 }
 
+// 一時停止処理（現在の位置を保持）
+function pauseAllSequence() {
+    isAllPlaying = false;
+    clearTimeout(sequenceTimer);
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    btnToggleAll.classList.remove('playing');
+    allBtnIcon.textContent = '▶️';
+    allBtnText.textContent = `[${currentPlayingIndex + 1}問目から] 連続再生を再開`;
+    allPlayStatus.textContent = `一時停止中: [${currentPlayingIndex + 1} / ${data.length}]`;
+}
+
+// 完全停止処理（最初に戻す）
 function stopAllSequence() {
     isAllPlaying = false;
+    currentPlayingIndex = 0;
     clearTimeout(sequenceTimer);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     clearHighlights();
@@ -110,6 +124,7 @@ function playAllStep(index) {
         return;
     }
 
+    currentPlayingIndex = index;
     allPlayStatus.textContent = `再生中: [${index + 1} / ${data.length}]`;
     highlightCard(index);
 
@@ -132,15 +147,16 @@ function playAllStep(index) {
     });
 }
 
+// ボタンのクリックイベント（再生中なら一時停止、停止中なら現在の位置から再開）
 btnToggleAll.addEventListener('click', () => {
     if (isAllPlaying) {
-        stopAllSequence();
+        pauseAllSequence();
     } else {
         isAllPlaying = true;
         btnToggleAll.classList.add('playing');
-        allBtnIcon.textContent = '⏹️';
-        allBtnText.textContent = '連続再生を停止';
-        playAllStep(0);
+        allBtnIcon.textContent = '⏸️';
+        allBtnText.textContent = '連続再生を一時停止';
+        playAllStep(currentPlayingIndex);
     }
 });
 
