@@ -92,9 +92,19 @@ function highlightCard(index) {
     }
 }
 
-// 一時停止処理（現在の位置を保持）
-function pauseAllSequence() {
+// 連続再生の開始処理（指定インデックスから）
+function startAllSequence(startIndex = 0) {
+    isAllPlaying = true;
+    btnToggleAll.classList.add('playing');
+    allBtnIcon.textContent = '⏸️';
+    allBtnText.textContent = '連続再生を一時停止';
+    playAllStep(startIndex);
+}
+
+// 一時停止処理（インデックスを指定して保持可能）
+function pauseAllSequence(targetIndex = currentPlayingIndex) {
     isAllPlaying = false;
+    currentPlayingIndex = targetIndex;
     clearTimeout(sequenceTimer);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     btnToggleAll.classList.remove('playing');
@@ -152,11 +162,7 @@ btnToggleAll.addEventListener('click', () => {
     if (isAllPlaying) {
         pauseAllSequence();
     } else {
-        isAllPlaying = true;
-        btnToggleAll.classList.add('playing');
-        allBtnIcon.textContent = '⏸️';
-        allBtnText.textContent = '連続再生を一時停止';
-        playAllStep(currentPlayingIndex);
+        startAllSequence(currentPlayingIndex);
     }
 });
 
@@ -178,7 +184,7 @@ data.forEach((item, index) => {
 
     card.innerHTML = `
         <div class="card-header">
-            <div class="context">[${item.id}] ${item.context}</div>
+            <div class="context" id="context-${index}" title="クリックしてここから再生/一時停止">[${item.id}] ${item.context}</div>
             <div>
                 <span class="playing-badge">● 再生中</span>
                 <button class="btn-autoplay" id="btn-chain-${index}">▶ 日➔英</button>
@@ -197,11 +203,24 @@ data.forEach((item, index) => {
 
     listContainer.appendChild(card);
 
+    const contextEl = card.querySelector(`#context-${index}`);
     const showBtn = card.querySelector(`#btn-show-${index}`);
     const enArea = card.querySelector(`#en-area-${index}`);
     const soundJaBtn = card.querySelector(`#btn-sound-ja-${index}`);
     const replayEnBtn = card.querySelector(`#btn-replay-en-${index}`);
     const chainBtn = card.querySelector(`#btn-chain-${index}`);
+
+    // ① & ② class="context" のクリックイベント
+    contextEl.addEventListener('click', () => {
+        if (isAllPlaying) {
+            // ① 連続再生中であれば一時停止し、次回クリック位置から再開できるようにする
+            pauseAllSequence(index);
+            highlightCard(index);
+        } else {
+            // ② 連続再生中でなければ、自分のところから連続再生を開始する
+            startAllSequence(index);
+        }
+    });
 
     soundJaBtn.addEventListener('click', () => {
         stopAllSequence();

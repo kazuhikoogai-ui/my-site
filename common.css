@@ -149,6 +149,45 @@ select {
     font-size: 0.88rem;
     color: #7f8c8d;
 }
+/* --- common.css の .context 周辺を以下に更新・追記 --- */
+
+.context {
+    font-size: 0.88rem;
+    color: #7f8c8d;
+    cursor: pointer;             /* クリック可能であることがわかるように */
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 6px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+/* ホバー時にクリック可能であることを強調 */
+.context:hover {
+    color: #2980b9;
+    background-color: #ebf5fb;
+}
+
+/* ③ class="context" のテキストの前にCSSで再生アイコンを付与 */
+.context::before {
+    content: "▶";
+    font-size: 0.72rem;
+    color: #3498db;
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.context:hover::before {
+    transform: scale(1.15);
+    color: #e67e22;
+}
+
+/* 再生中のカード内の context アイコン演出（任意） */
+.card.active-playing .context::before {
+    color: #e67e22;
+}
 .playing-badge {
     display: none;
     background-color: #e67e22;
