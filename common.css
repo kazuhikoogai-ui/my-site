@@ -184,10 +184,6 @@ select {
     color: #e67e22;
 }
 
-/* 再生中のカード内の context アイコン演出（任意） */
-.card.active-playing .context::before {
-    color: #e67e22;
-}
 .playing-badge {
     display: none;
     background-color: #e67e22;
@@ -200,6 +196,14 @@ select {
 .card.active-playing .playing-badge {
     display: inline-block;
 }
+
+/* 再生中のカード内の context アイコン演出（再生中＝停止アイコン ■ に変更） */
+.card.active-playing .context::before {
+    content: "■";
+    color: #e67e22;
+    font-size: 0.70rem; /* 四角は三角に比べて大きく見えやすいため、微調整（お好みで） */
+}
+
 .btn-autoplay {
     background: #eafaf1;
     border: 1px solid #2ecc71;
