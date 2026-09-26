@@ -12,7 +12,18 @@ let englishVoices = [];
 let japaneseVoices = [];
 let isAllPlaying = false;
 let sequenceTimer = null;
-let currentPlayingIndex = 0; // 現在（または一時停止中）のカード番号を保持
+
+// 前回停止位置を localStorage から復元（なければ 0）
+let currentPlayingIndex = parseInt(localStorage.getItem('all_scenes_last_index') || '0', 10);
+if (isNaN(currentPlayingIndex) || currentPlayingIndex < 0 || (typeof data !== 'undefined' && currentPlayingIndex >= data.length)) {
+    currentPlayingIndex = 0;
+}
+
+// 初期表示時に前回停止位置があればボタン表示とステータスを更新
+if (typeof data !== 'undefined' && currentPlayingIndex > 0) {
+    allBtnText.textContent = `[${currentPlayingIndex + 1}問目から] 連続再生を再開`;
+    allPlayStatus.textContent = `一時停止中: [${currentPlayingIndex + 1} / ${data.length}]`;
+}
 
 function populateVoiceList() {
     if (!('speechSynthesis' in window)) return;
@@ -92,8 +103,8 @@ function highlightCard(index) {
     }
 }
 
-// 連続再生の開始処理（指定インデックスから）
-function startAllSequence(startIndex = 0) {
+// 連続再生の開始処理（指定インデックス、または現在位置から）
+function startAllSequence(startIndex = currentPlayingIndex) {
     isAllPlaying = true;
     btnToggleAll.classList.add('playing');
     allBtnIcon.textContent = '⏸️';
@@ -101,10 +112,15 @@ function startAllSequence(startIndex = 0) {
     playAllStep(startIndex);
 }
 
-// 一時停止処理（インデックスを指定して保持可能）
+// 一時停止処理（位置を保存して保持）
 function pauseAllSequence(targetIndex = currentPlayingIndex) {
     isAllPlaying = false;
     currentPlayingIndex = targetIndex;
+    try {
+        localStorage.setItem('all_scenes_last_index', currentPlayingIndex);
+    } catch (e) {
+        console.warn('localStorage access failed:', e);
+    }
     clearTimeout(sequenceTimer);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     btnToggleAll.classList.remove('playing');
@@ -113,16 +129,21 @@ function pauseAllSequence(targetIndex = currentPlayingIndex) {
     allPlayStatus.textContent = `一時停止中: [${currentPlayingIndex + 1} / ${data.length}]`;
 }
 
-// 完全停止処理（最初に戻す）
+// 全問再生完了時の初期化処理
 function stopAllSequence() {
     isAllPlaying = false;
     currentPlayingIndex = 0;
+    try {
+        localStorage.removeItem('all_scenes_last_index');
+    } catch (e) {
+        console.warn('localStorage access failed:', e);
+    }
     clearTimeout(sequenceTimer);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     clearHighlights();
     btnToggleAll.classList.remove('playing');
     allBtnIcon.textContent = '▶️';
-    allBtnText.textContent = '全問を最初から連続再生';
+    allBtnText.textContent = '全セクションを最初から連続再生';
     allPlayStatus.textContent = '停止中';
 }
 
@@ -135,6 +156,11 @@ function playAllStep(index) {
     }
 
     currentPlayingIndex = index;
+    try {
+        localStorage.setItem('all_scenes_last_index', currentPlayingIndex);
+    } catch (e) {
+        console.warn('localStorage access failed:', e);
+    }
     allPlayStatus.textContent = `再生中: [${index + 1} / ${data.length}]`;
     highlightCard(index);
 
@@ -157,7 +183,7 @@ function playAllStep(index) {
     });
 }
 
-// ボタンのクリックイベント（再生中なら一時停止、停止中なら現在の位置から再開）
+// 連続再生ボタンのクリックイベント（再生中なら一時停止、停止中なら現在位置から再開）
 btnToggleAll.addEventListener('click', () => {
     if (isAllPlaying) {
         pauseAllSequence();
@@ -166,13 +192,14 @@ btnToggleAll.addEventListener('click', () => {
     }
 });
 
+// 音声テストボタン（再生位置はリセットせず一時停止扱い）
 document.getElementById('btn-test-en').addEventListener('click', () => {
-    stopAllSequence();
+    pauseAllSequence();
     speak("Hello! How can I help you today?", 'en');
 });
 
 document.getElementById('btn-test-ja').addEventListener('click', () => {
-    stopAllSequence();
+    pauseAllSequence();
     speak("こんにちは！良い旅を！", 'ja');
 });
 
@@ -210,26 +237,25 @@ data.forEach((item, index) => {
     const replayEnBtn = card.querySelector(`#btn-replay-en-${index}`);
     const chainBtn = card.querySelector(`#btn-chain-${index}`);
 
-    // ① & ② class="context" のクリックイベント
+    // 見出しタイトルをクリックして再生/一時停止
     contextEl.addEventListener('click', () => {
         if (isAllPlaying) {
-            // ① 連続再生中であれば一時停止し、次回クリック位置から再開できるようにする
             pauseAllSequence(index);
             highlightCard(index);
         } else {
-            // ② 連続再生中でなければ、自分のところから連続再生を開始する
             startAllSequence(index);
         }
     });
 
+    // 個別ボタン押下時も停止位置をそのカード番号に保持（stopAllSequenceではなくpauseAllSequenceを使用）
     soundJaBtn.addEventListener('click', () => {
-        stopAllSequence();
+        pauseAllSequence(index);
         highlightCard(index);
         speak(item.ja, 'ja', clearHighlights);
     });
 
     showBtn.addEventListener('click', () => {
-        stopAllSequence();
+        pauseAllSequence(index);
         highlightCard(index);
         enArea.style.display = 'block';
         showBtn.style.display = 'none';
@@ -237,13 +263,13 @@ data.forEach((item, index) => {
     });
 
     replayEnBtn.addEventListener('click', () => {
-        stopAllSequence();
+        pauseAllSequence(index);
         highlightCard(index);
         speak(item.en, 'en', clearHighlights);
     });
 
     chainBtn.addEventListener('click', () => {
-        stopAllSequence();
+        pauseAllSequence(index);
         highlightCard(index);
         enArea.style.display = 'block';
         showBtn.style.display = 'none';
