@@ -6,9 +6,48 @@
     <title>全セクション通し再生 (全938問)</title>
     <!-- 共通スタイルシートの読み込み -->
     <link rel="stylesheet" href="common.css">
-    <style>
-        .settings-panel { background: #ffffff; padding: 16px 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 12px; position: sticky; top: 10px; z-index: 100; }
-    </style>
+<style>
+        .settings-panel { 
+            background: #ffffff; 
+            padding: 16px 20px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            position: sticky; 
+            top: 10px; 
+            z-index: 100; 
+        }
+
+        /* 音声・速度設定の開閉用アコーディオン設定 */
+        .settings-details {
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            padding: 4px 10px;
+            background: #fafbfc;
+        }
+        .settings-details summary {
+            font-size: 0.92rem;
+            font-weight: bold;
+            color: #34495e;
+            cursor: pointer;
+            padding: 8px 4px;
+            user-select: none;
+            outline: none;
+        }
+        .settings-details summary:hover {
+            color: #2980b9;
+        }
+        .settings-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 10px 4px 6px;
+            border-top: 1px dashed #e2e8f0;
+        }
+    </style>    
 </head>
 <body>
 <div class="container">
@@ -17,28 +56,34 @@
         <a href="index.html">🏠 TOP（目次）</a>
     </div>
     <div class="settings-panel">
-        <div class="setting-row">
-            <span class="setting-label">🗣️ 英語の音声</span>
-            <div class="voice-controls">
-                <select id="voice-select-en"></select>
-                <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+<!-- 音声・速度設定（アコーディオン：デフォルトは閉じている） -->
+        <details class="settings-details">
+            <summary>⚙️ 音声・再生速度の設定（タップで開く）</summary>
+            <div class="settings-content">
+                <div class="setting-row">
+                    <span class="setting-label">🗣️ 英語の音声</span>
+                    <div class="voice-controls">
+                        <select id="voice-select-en"></select>
+                        <button class="btn-test" id="btn-test-en">英語テスト 🔈</button>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">🇯🇵 日本語の音声</span>
+                    <div class="voice-controls">
+                        <select id="voice-select-ja"></select>
+                        <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">🐢 再生速度 🐇</span>
+                    <div class="speed-control">
+                        <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
+                        <span id="speed-label" class="speed-val">0.80x</span>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="setting-row">
-            <span class="setting-label">🇯🇵 日本語の音声</span>
-            <div class="voice-controls">
-                <select id="voice-select-ja"></select>
-                <button class="btn-test" id="btn-test-ja">日本語テスト 🔈</button>
-            </div>
-        </div>
-        <div class="setting-row">
-            <span class="setting-label">🐢 再生速度 🐇</span>
-            <div class="speed-control">
-                <input type="range" id="rate-slider" min="0.5" max="1.2" step="0.05" value="0.8">
-                <span id="speed-label" class="speed-val">0.80x</span>
-            </div>
-        </div>
-        <div class="all-play-container">
+        </details>
+                <div class="all-play-container">
             <button class="btn-play-all" id="btn-toggle-all">
                 <span id="all-btn-icon">▶️</span>
                 <span id="all-btn-text">全セクションを最初から連続再生</span>
